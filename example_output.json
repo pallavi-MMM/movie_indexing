@@ -1,0 +1,97 @@
+{
+  "scene_id": "example_scene_001",
+  "movie_id": "EXAMPLE_MOVIE",
+  "dialogue_text": [
+    {
+      "character": "Alice",
+      "line": "Welcome!"
+    },
+    {
+      "character": "Bob",
+      "line": "Great to be here!"
+    }
+  ],
+  "emotions": [
+    "excited",
+    "welcoming"
+  ],
+  "field_confidences": {
+    "dialogue_text": null,
+    "emotions": null,
+    "keywords_auto_generated": null,
+    "objects": null,
+    "quality_flags": 0.1,
+    "safety_flags": 0.1
+  },
+  "field_provenance": {
+    "dialogue_text": [
+      "input_scene"
+    ],
+    "emotions": [
+      "input_scene"
+    ],
+    "field_confidences": [
+      "scene_safety",
+      "visual_quality",
+      "vlm_summary"
+    ],
+    "field_provenance": [
+      "scene_safety",
+      "visual_quality",
+      "vlm_summary"
+    ],
+    "keywords_auto_generated": [
+      "vlm_summary"
+    ],
+    "location": [
+      "input_scene"
+    ],
+    "objects": [
+      "input_scene"
+    ],
+    "quality_flags": [
+      "mock_visual_quality",
+      "visual_quality"
+    ],
+    "safety_flags": [
+      "mock_scene_safety",
+      "scene_safety"
+    ],
+    "scene_summary": [
+      "vlm_dialogue_encoder",
+      "vlm_object_encoder",
+      "vlm_summary"
+    ],
+    "title_name": [
+      "input_scene"
+    ]
+  },
+  "keywords_auto_generated": [
+    "laptop",
+    "desk"
+  ],
+  "location": "Home office",
+  "objects": [
+    {
+      "type": "laptop",
+      "color": "silver"
+    },
+    {
+      "type": "desk",
+      "color": "oak"
+    }
+  ],
+  "quality_flags": {
+    "black_frames_detected": false,
+    "flash_frames_detected": false,
+    "bitrate_drop_detected": false
+  },
+  "safety_flags": {
+    "violence": false,
+    "nudity": false,
+    "drug_use": false,
+    "strong_language": false
+  },
+  "scene_summary": "Dialogue: Welcome! Great to be here! | Objects: laptop, desk",
+  "title_name": "Opening Scene"
+}
