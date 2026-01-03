@@ -97,6 +97,42 @@ def merge_scenes_from_sources(sources: Iterable[Dict[str, Any]]) -> Dict[str, An
         # handle arrays specially: union unique
         first_val = candidates[0][0]
         if isinstance(first_val, list):
+            # Special-case for character lists where items are objects with 'name', 'screen_time', and confidence
+            if first_val and isinstance(first_val[0], dict) and field == "characters":
+                # Aggregate by character name
+                char_map = {}
+                provs_all: List[str] = []
+                confs_map = {}
+                for val, conf, prov in candidates:
+                    if isinstance(val, list):
+                        for item in val:
+                            name = item.get("name")
+                            if not name:
+                                continue
+                            if name not in char_map:
+                                char_map[name] = item.copy()
+                                # initialize screen_time
+                                if "screen_time" not in char_map[name]:
+                                    char_map[name]["screen_time"] = 0.0
+                            else:
+                                # aggregate numeric fields such as screen_time
+                                if "screen_time" in item and isinstance(item["screen_time"], (int, float)):
+                                    char_map[name]["screen_time"] = float(char_map[name].get("screen_time", 0.0)) + float(item["screen_time"])
+                            # track confidence per character
+                            if conf is not None:
+                                confs_map[name] = max(confs_map.get(name, 0.0), conf)
+                    for p in prov:
+                        if p not in provs_all:
+                            provs_all.append(p)
+                merged_chars = list(char_map.values())
+                merged[field] = merged_chars
+                # assign confidences per-character as a map
+                if confs_map:
+                    field_confidences[field] = {k: v for k, v in confs_map.items()}
+                if provs_all:
+                    field_provenance[field] = provs_all
+                continue
+
             lists = []
             confs = []
             provs_all: List[str] = []
