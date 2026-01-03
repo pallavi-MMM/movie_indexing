@@ -5,12 +5,15 @@ This module is intended for unit tests and local development. It does not
 require heavy models and uses the mock implementations already present.
 """
 from typing import Dict, Any, List
+import logging
 
 from src.scene_safety import analyze_scene
 from src.visual_quality import analyze_visual_quality
 from src.vlm_summary import summarize_scene
 from src.scene_fusion import merge_scenes_from_sources
 from src.face_actor_pipeline import FaceActorPipeline
+
+logger = logging.getLogger(__name__)
 
 
 def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
@@ -83,8 +86,9 @@ def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
                     if isinstance(emb, list):
                         fap.register_actor(name, emb)
             characters_result = fap.process_video(video_path)
-        except Exception:
-            # On any runtime error, do not break the pipeline; leave characters_result None
+        except Exception as e:
+            # Log error for debugging but do not break the pipeline
+            logger.warning(f"Face->actor pipeline failed for scene {base_scene.get('scene_id')}: {type(e).__name__}: {e}")
             characters_result = None
 
     # If characters were found, include them as another source for fusion
