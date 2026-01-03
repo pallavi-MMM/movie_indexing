@@ -1,0 +1,173 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scene",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["scene_id", "movie_id"],
+  "properties": {
+    "scene_id": {"type": "string"},
+    "movie_id": {"type": ["string", "null"]},
+    "title_name": {"type": ["string", "null"]},
+
+    "start_time": {"type": ["string", "null"], "description": "ISO8601 or HH:MM:SS"},
+    "end_time": {"type": ["string", "null"]},
+    "duration": {"type": ["number", "null"]},
+
+    "scene_summary": {"type": ["string", "null"]},
+
+    "characters": {"type": "array", "items": {"type": "string"}},
+    "dialogue_text": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "character": {"type": ["string", "null"]},
+          "line": {"type": "string"}
+        },
+        "required": ["line"]
+      }
+    },
+    "location": {"type": ["string", "null"]},
+    "actions": {"type": "array", "items": {"type": "string"}},
+    "emotions": {"type": "array", "items": {"type": "string"}},
+
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string"},
+          "model": {"type": ["string", "null"]},
+          "year": {"type": ["string", "number", "null"]},
+          "color": {"type": ["string", "null"]},
+          "details": {"type": ["string", "null"]}
+        },
+        "required": ["type"]
+      }
+    },
+
+    "sentiment": {"type": ["string", "null"]},
+    "scene_type": {"type": ["string", "null"]},
+
+    "background_music_mood": {"type": ["string", "null"]},
+    "key_plot_point": {"type": ["boolean", "null"]},
+    "violence_level": {"type": ["string", "null"]},
+    "profanity_present": {"type": ["boolean", "null"]},
+
+    "lighting_style": {"type": ["string", "null"]},
+    "sound_design_notes": {"type": ["string", "null"]},
+    "vfx_presence": {"type": ["boolean", "null"]},
+    "vfx_details": {"type": ["string", "null"]},
+    "weather": {"type": ["string", "null"]},
+    "time_of_day": {"type": ["string", "null"]},
+
+    "importance_score": {"type": ["number", "null"]},
+    "color_tone": {"type": ["string", "null"]},
+    "shot_type": {"type": ["string", "null"]},
+    "background_activity": {"type": "array", "items": {"type": "string"}},
+
+    "narration_present": {"type": ["boolean", "null"]},
+    "narration_text": {"type": ["string", "null"]},
+    "foley_notes": {"type": ["string", "null"]},
+    "camera_movement": {"type": ["string", "null"]},
+    "symbolism_elements": {"type": "array", "items": {"type": "string"}},
+    "cultural_reference": {"type": "array", "items": {"type": "string"}},
+    "cinematic_style": {"type": ["string", "null"]},
+
+    "sfx_presence": {"type": ["boolean", "null"]},
+    "sfx_details": {"type": ["string", "null"]},
+    "cg_characters_present": {"type": ["boolean", "null"]},
+    "cg_elements": {"type": "array", "items": {"type": "string"}},
+
+    "character_dominance_ranking": {
+      "type": "array",
+      "description": "Ranked list of characters by screen-time or prominence",
+      "items": {
+        "type": "object",
+        "properties": {
+          "character": {"type": ["string", "null"]},
+          "score": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "required": ["character", "score"]
+      }
+    },
+
+    "scene_rating_flags": {
+      "type": "object",
+      "properties": {
+        "violence": {"type": "boolean"},
+        "nudity": {"type": "boolean"},
+        "drug_use": {"type": "boolean"},
+        "self_harm": {"type": "boolean"},
+        "strong_language": {"type": "boolean"},
+        "disturbing_content": {"type": "boolean"}
+      }
+    },
+
+    "metadata_version": {"type": "string"},
+
+    "field_confidences": {
+      "type": "object",
+      "description": "Optional map of field names to confidence scores (0.0-1.0)",
+      "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+    },
+
+    "field_provenance": {
+      "type": "object",
+      "description": "Optional map of field names to array of provenance strings (model ids, module names, notes)",
+      "additionalProperties": {"type": "array", "items": {"type": "string"}}
+    },
+
+    "ai_confidence_score": {"type": ["number", "null"]},
+    "ai_model_version": {"type": ["string", "null"]},
+    "embedding_vector_id": {"type": ["string", "null"]},
+    "similar_scene_ids": {"type": "array", "items": {"type": "string"}},
+    "keywords_auto_generated": {"type": "array", "items": {"type": "string"}},
+    "quality_detection_flags": {"type": "array", "items": {"type": "string"}},
+
+    "motion_intensity_score": {"type": ["number", "null"]},
+    "audio_clarity_score": {"type": ["number", "null"]},
+
+    "audio_peaks_detected": {"type": ["boolean", "null"]},
+    "black_frames_detected": {"type": ["boolean", "null"]},
+    "flash_frames_detected": {"type": ["boolean", "null"]},
+    "subtitle_present": {"type": ["boolean", "null"]},
+    "subtitle_text": {"type": ["string", "null"]},
+    "bitrate_drop_detected": {"type": ["boolean", "null"]},
+    "frame_drop_detected": {"type": ["boolean", "null"]},
+    "aspect_ratio": {"type": ["number", "null"]},
+    "resolution": {"type": ["string", "null"]},
+
+    "age_rating_suggestion": {"type": ["string", "null"]},
+    "sensitive_content_type": {"type": ["string", "null"]},
+    "brand_appearance": {"type": "array", "items": {"type": "string"}},
+    "political_content_flag": {"type": ["boolean", "null"]},
+    "religious_content_flag": {"type": ["boolean", "null"]},
+    "medical_content_flag": {"type": ["boolean", "null"]},
+    "legal_context_type": {"type": ["string", "null"]},
+
+    "director_notes": {"type": ["string", "null"]},
+    "editor_notes": {"type": ["string", "null"]},
+    "retake_needed": {"type": ["boolean", "null"]},
+    "bloopers_present": {"type": ["boolean", "null"]},
+    "alt_cut_available": {"type": ["boolean", "null"]},
+    "scene_priority": {"type": ["string", "null"]},
+
+    "dialogue_intensity": {"type": ["string", "null"]},
+    "background_noise_level": {"type": ["string", "null"]},
+
+    "laugh_moment_flag": {"type": ["boolean", "null"]},
+    "shock_moment_flag": {"type": ["boolean", "null"]},
+    "climax_point_flag": {"type": ["boolean", "null"]},
+    "viewer_attention_score": {"type": ["number", "null"]},
+    "viewer_emotion_prediction": {"type": ["string", "null"]},
+    "timestamp_peak_engagement": {"type": ["string", "null"]},
+
+    "cultural_sensitivity_notes": {"type": ["string", "null"]},
+    "idiom_translation_notes": {"type": ["string", "null"]},
+
+    "brand_clearance_required": {"type": ["boolean", "null"]},
+
+    "notes": {"type": ["string", "null"]}
+  }
+}
