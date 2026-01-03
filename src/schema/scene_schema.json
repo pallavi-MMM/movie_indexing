@@ -108,8 +108,13 @@
 
     "field_confidences": {
       "type": "object",
-      "description": "Optional map of field names to confidence scores (0.0-1.0)",
-      "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}
+      "description": "Optional map of field names to confidence scores (0.0-1.0) or per-item maps",
+      "additionalProperties": {
+        "oneOf": [
+          {"type": "number", "minimum": 0, "maximum": 1},
+          {"type": "object", "additionalProperties": {"type": "number", "minimum": 0, "maximum": 1}}
+        ]
+      }
     },
 
     "field_provenance": {
