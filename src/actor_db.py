@@ -2,9 +2,13 @@
 
 This stores actor names with representative embeddings and metadata. It's
 meant as a lightweight, testable replacement for a production actor store.
+
+Supports persistence: save() / load() for JSON-based storage.
 """
 from typing import Dict, List, Any, Optional, Tuple
 import math
+import json
+from pathlib import Path
 
 
 def _cosine(a: List[float], b: List[float]) -> float:
@@ -42,6 +46,22 @@ class ActorDB:
 
     def list_actors(self) -> List[str]:
         return list(self._actors.keys())
+
+    def save(self, path: str):
+        """Save actor database to JSON file."""
+        data = {"dim": self.dim, "actors": self._actors}
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+
+    @staticmethod
+    def load(path: str) -> "ActorDB":
+        """Load actor database from JSON file."""
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        db = ActorDB(data["dim"])
+        for name, rec in data.get("actors", {}).items():
+            db._actors[name] = rec
+        return db
 
 
 __all__ = ["ActorDB"]
