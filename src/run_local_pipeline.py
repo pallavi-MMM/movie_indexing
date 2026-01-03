@@ -10,6 +10,7 @@ from src.scene_safety import analyze_scene
 from src.visual_quality import analyze_visual_quality
 from src.vlm_summary import summarize_scene
 from src.scene_fusion import merge_scenes_from_sources
+from src.face_actor_pipeline import FaceActorPipeline
 
 
 def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
@@ -63,6 +64,49 @@ def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
         vq_scene.setdefault("field_provenance", {})
         vq_scene["field_provenance"]["quality_flags"] = provs
 
+    # Prepare container for any additional sources (e.g., characters from face-actor pipeline)
+    pre_sources: List[Dict[str, Any]] = []
+
+    # Face tracking + actor linking (optional): if a video_path is provided,
+    # and optionally an `actor_catalog` mapping name -> embedding list, run
+    # the FaceActorPipeline to populate `characters`.
+    characters_result = None
+    video_path = base_scene.get("video_path")
+    actor_catalog = base_scene.get("actor_catalog")
+    if video_path:
+        # create pipeline and register actors from provided catalog
+        try:
+            fap = FaceActorPipeline(dim=3, tracker_mode="mock")
+            if isinstance(actor_catalog, dict):
+                for name, emb in actor_catalog.items():
+                    # expect embedding as list
+                    if isinstance(emb, list):
+                        fap.register_actor(name, emb)
+            characters_result = fap.process_video(video_path)
+        except Exception:
+            # On any runtime error, do not break the pipeline; leave characters_result None
+            characters_result = None
+
+    # If characters were found, include them as another source for fusion
+    if characters_result is not None:
+        char_scene = {"scene_id": base_scene.get("scene_id"), "movie_id": base_scene.get("movie_id"), "characters": characters_result}
+        # derive confidences/provenance map
+        conf_map = {c.get("name"): c.get("confidence") for c in characters_result if c.get("name")}
+        prov_map = {c.get("name"): c.get("provenance", []) for c in characters_result if c.get("name")}
+        if conf_map:
+            char_scene.setdefault("field_confidences", {})
+            char_scene["field_confidences"]["characters"] = conf_map
+        if prov_map:
+            char_scene.setdefault("field_provenance", {})
+            # flatten provenance into list for the characters field
+            provs = []
+            for lst in prov_map.values():
+                for p in lst:
+                    if p not in provs:
+                        provs.append(p)
+            char_scene["field_provenance"]["characters"] = provs
+        pre_sources.append({"scene": char_scene, "source": "face_actor_pipeline"})
+
     # Prepare VLM inputs: give summarizer combined context (merge early signals)
     vlm_input = dict(base_scene)
     vlm_input.update(safety_out)
@@ -81,11 +125,12 @@ def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
         for k, v in vlm_out.get("field_provenance", {}).items():
             vlm_scene["field_provenance"][k] = v
 
-    # Build sources for fusion
+    # Build sources for fusion (include any pre_sources like face_actor_pipeline)
     sources: List[Dict[str, Any]] = [
         {"scene": base_scene, "source": "input_scene"},
         {"scene": safety_scene, "source": "scene_safety"},
         {"scene": vq_scene, "source": "visual_quality"},
+    ] + pre_sources + [
         {"scene": vlm_scene, "source": "vlm_summary"},
     ]
 

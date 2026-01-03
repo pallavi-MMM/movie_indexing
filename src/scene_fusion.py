@@ -105,22 +105,28 @@ def merge_scenes_from_sources(sources: Iterable[Dict[str, Any]]) -> Dict[str, An
                 confs_map = {}
                 for val, conf, prov in candidates:
                     if isinstance(val, list):
-                        for item in val:
-                            name = item.get("name")
-                            if not name:
-                                continue
-                            if name not in char_map:
-                                char_map[name] = item.copy()
-                                # initialize screen_time
-                                if "screen_time" not in char_map[name]:
-                                    char_map[name]["screen_time"] = 0.0
-                            else:
-                                # aggregate numeric fields such as screen_time
-                                if "screen_time" in item and isinstance(item["screen_time"], (int, float)):
-                                    char_map[name]["screen_time"] = float(char_map[name].get("screen_time", 0.0)) + float(item["screen_time"])
-                            # track confidence per character
-                            if conf is not None:
-                                confs_map[name] = max(confs_map.get(name, 0.0), conf)
+                            for item in val:
+                                name = item.get("name")
+                                if not name:
+                                    continue
+                                if name not in char_map:
+                                    char_map[name] = item.copy()
+                                    # initialize screen_time
+                                    if "screen_time" not in char_map[name]:
+                                        char_map[name]["screen_time"] = 0.0
+                                else:
+                                    # aggregate numeric fields such as screen_time
+                                    if "screen_time" in item and isinstance(item["screen_time"], (int, float)):
+                                        char_map[name]["screen_time"] = float(char_map[name].get("screen_time", 0.0)) + float(item["screen_time"])
+                                # determine confidence for this character: conf may be a number or a per-item dict
+                                item_conf = None
+                                if isinstance(conf, dict):
+                                    # conf maps item names to confidences
+                                    item_conf = conf.get(name)
+                                elif isinstance(conf, (int, float)):
+                                    item_conf = conf
+                                if item_conf is not None:
+                                    confs_map[name] = max(confs_map.get(name, 0.0), float(item_conf))
                     for p in prov:
                         if p not in provs_all:
                             provs_all.append(p)
