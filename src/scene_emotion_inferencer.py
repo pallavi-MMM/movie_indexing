@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 
 
-
 def infer_emotion(scene):
     emotions = set()
     viewer_emotion = "neutral"
@@ -41,7 +40,7 @@ def infer_emotion(scene):
         "viewer_emotion_prediction": viewer_emotion,
         "laugh_moment_flag": "humor" in emotions,
         "shock_moment_flag": "shock" in emotions,
-        "climax_point_flag": False  # filled later globally
+        "climax_point_flag": False,  # filled later globally
     }
 
 

@@ -40,6 +40,7 @@ class TestSceneContentSafety(unittest.TestCase):
 
     def test_main_accepts_variants(self):
         import os
+
         repo = os.path.dirname(os.path.dirname(__file__))
         idx_dir = os.path.join(repo, "outputs", "scene_index")
         os.makedirs(idx_dir, exist_ok=True)
@@ -47,12 +48,20 @@ class TestSceneContentSafety(unittest.TestCase):
         movie = "VARIANT_MOVIE"
         # create a _FINAL_WITH_DIALOGUE_EMOTION variant
         src_path = os.path.join(idx_dir, f"{movie}_FINAL_WITH_DIALOGUE_EMOTION.json")
-        scenes = [{"scene_id": "scene_0001", "objects": ["knife"], "motion_intensity_score": 0, "profanity_present": None}]
+        scenes = [
+            {
+                "scene_id": "scene_0001",
+                "objects": ["knife"],
+                "motion_intensity_score": 0,
+                "profanity_present": None,
+            }
+        ]
         with open(src_path, "w", encoding="utf-8") as f:
             json.dump(scenes, f)
 
         # call the module with TARGET_MOVIE set
         import importlib
+
         m = importlib.import_module("src.scene_content_safety")
         setattr(m, "TARGET_MOVIE", movie)
 

@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 
 
-
 def load_scene_timings(movie_name):
     path = f"outputs/scenes/{movie_name}_scenes.json"
 
@@ -48,6 +47,7 @@ os.makedirs(FINAL_OUTPUT_DIR, exist_ok=True)
 
 # ================= HELPERS =================
 
+
 def normalize_scene_id(scene_id: str, movie: str) -> str:
     """Ensure scene_id is prefixed with movie name"""
     if scene_id.startswith(movie):
@@ -89,13 +89,22 @@ def load_folder_as_map(folder_path, movie_name: str):
             # content may contain movie_id
             if isinstance(content, dict) and content.get("movie_id"):
                 file_movie = content.get("movie_id")
-            if isinstance(content, list) and content and isinstance(content[0], dict) and content[0].get("movie_id"):
+            if (
+                isinstance(content, list)
+                and content
+                and isinstance(content[0], dict)
+                and content[0].get("movie_id")
+            ):
                 file_movie = content[0].get("movie_id")
 
             # Only include items that belong to the requested movie
             def local_sid(raw_sid: str) -> str:
                 # strip any movie prefix if present
-                if "_" in raw_sid and raw_sid.count("_") >= 2 and raw_sid.split("_")[0] == file_movie:
+                if (
+                    "_" in raw_sid
+                    and raw_sid.count("_") >= 2
+                    and raw_sid.split("_")[0] == file_movie
+                ):
                     # raw_sid like '<movie>_scene_0001' -> return 'scene_0001'
                     parts = raw_sid.split("_", 1)
                     return parts[1]
@@ -130,37 +139,29 @@ def empty_scene_template(scene_id):
         "scene_id": scene_id,
         "movie_id": None,
         "title_name": None,
-
         "start_time": None,
         "end_time": None,
         "duration": None,
-
         "scene_summary": "",
         "scene_type": "",
         "scene_category_secondary": "",
-
         "importance_score": None,
         "scene_priority": "",
         "scene_priority_score": None,
         "viewer_attention_score": None,
         "key_plot_point": None,
-
         "characters": [],
         "character_dominance_ranking": [],
-
         "dialogue_text": [],
         "dialogue_speed_wpm": None,
         "audio_clarity_score": None,
         "profanity_present": None,
-
         "location": "",
         "time_of_day": "",
         "indoor_outdoor": "",
-
         "objects": [],
         "actions": [],
         "background_activity": [],
-
         "resolution": "",
         "aspect_ratio": None,
         "motion_intensity_score": None,
@@ -168,18 +169,15 @@ def empty_scene_template(scene_id):
         "lighting_style": "",
         "color_tone": "",
         "shot_type": "",
-
         "emotion_arousal_score": None,
         "emotion_scene_variation_score": None,
         "audio_activity_score": None,
-
         "vfx_presence": None,
         "cg_characters_present": None,
-
         "ai_confidence_score": None,
         "ai_model_version": "",
         "metadata_generated_at": datetime.utcnow().isoformat(),
-        "notes": ""
+        "notes": "",
     }
 
 
@@ -210,6 +208,7 @@ def merge_scene(target: dict, src: dict, src_name: str = None):
                 # avoid duplicates (primitive and dict by string repr)
                 seen = set()
                 out = []
+
                 def key_of(item):
                     if isinstance(item, dict):
                         return json.dumps(item, sort_keys=True)
@@ -253,7 +252,9 @@ def merge_scene(target: dict, src: dict, src_name: str = None):
 
     return target
 
+
 # ================= MAIN =================
+
 
 def main():
     # Determine which movie to process (TARGET_MOVIE set by orchestrator, else module-level MOVIE_NAME)
@@ -289,7 +290,9 @@ def main():
         if not src:
             print(f"[WARN] No data found for source '{name}' for movie '{movie}'")
         else:
-            print(f"[INFO] Source '{name}' contains {len(src)} scene entries for movie '{movie}'")
+            print(
+                f"[INFO] Source '{name}' contains {len(src)} scene entries for movie '{movie}'"
+            )
 
     # canonical scene ids come from the scenes JSON for this movie (local ids)
     scene_ids = sorted(scene_timings.keys())
@@ -303,7 +306,16 @@ def main():
             scene.update(scene_timings[local_sid])
 
         # conservative merges from phase outputs (only local scene ids)
-        for source_name, source in (("segments", segments), ("actors", actors), ("visuals", visuals), ("objects", objects), ("context", context), ("dialogue", dialogue), ("emotion", emotion), ("speakers", speakers)):
+        for source_name, source in (
+            ("segments", segments),
+            ("actors", actors),
+            ("visuals", visuals),
+            ("objects", objects),
+            ("context", context),
+            ("dialogue", dialogue),
+            ("emotion", emotion),
+            ("speakers", speakers),
+        ):
             if local_sid in source:
                 merge_scene(scene, source[local_sid], src_name=source_name)
 
@@ -326,13 +338,12 @@ def main():
                 prov[field] = True
         provenance[pid] = prov
 
-
     # compute output paths for this movie
     out_dir = OUT_DIR
     os.makedirs(out_dir, exist_ok=True)
     output_file = f"{out_dir}/{movie}_FINAL.json"
     provenance_file = f"{out_dir}/{movie}_FINAL.provenance.json"
-    
+
     # final complete schema output path
     final_output_file = f"{FINAL_OUTPUT_DIR}/{movie}_complete_schema.json"
 
@@ -341,15 +352,20 @@ def main():
 
     with open(provenance_file, "w", encoding="utf-8") as pf:
         json.dump(provenance, pf, indent=2, ensure_ascii=False)
-    
+
     # save final complete schema to output_json folder
     with open(final_output_file, "w", encoding="utf-8") as f:
-        json.dump({
-            "movie": movie,
-            "total_scenes": len(final_scenes),
-            "scenes": final_scenes,
-            "generated_at": datetime.now().isoformat()
-        }, f, indent=2, ensure_ascii=False)
+        json.dump(
+            {
+                "movie": movie,
+                "total_scenes": len(final_scenes),
+                "scenes": final_scenes,
+                "generated_at": datetime.now().isoformat(),
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+        )
 
     print(f"[OK] Final master JSON written → {output_file}")
     print(f"[OK] Complete schema saved → {final_output_file}")
@@ -358,12 +374,19 @@ def main():
     # Final schema check: warn or fail depending on environment
     try:
         from src.scene_schema import validate_scene
-        strict = __import__("os").getenv("SCHEMA_STRICT", "0").lower() in ("1", "true", "yes")
+
+        strict = __import__("os").getenv("SCHEMA_STRICT", "0").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
         for s in final_scenes:
             valid, msgs = validate_scene(s)
             if not valid:
                 if strict:
-                    raise RuntimeError(f"Schema validation failed for scene {s.get('scene_id')}: {msgs}")
+                    raise RuntimeError(
+                        f"Schema validation failed for scene {s.get('scene_id')}: {msgs}"
+                    )
                 else:
                     print(f"[WARN] Schema issue in scene {s.get('scene_id')}: {msgs}")
     except Exception:

@@ -6,6 +6,7 @@ def test_mock_asr_returns_structure(tmp_path):
     wav = tmp_path / "test.wav"
     # create a tiny WAV file (1 second, 1 channel, 16-bit)
     import wave
+
     with wave.open(str(wav), "wb") as w:
         w.setnchannels(1)
         w.setsampwidth(2)
@@ -25,6 +26,7 @@ def test_mock_asr_returns_structure(tmp_path):
 def test_auto_mode_falls_back_to_mock_when_no_backend(tmp_path):
     wav = tmp_path / "t2.wav"
     import wave
+
     with wave.open(str(wav), "wb") as w:
         w.setnchannels(1)
         w.setsampwidth(2)

@@ -20,6 +20,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 model = None
 _model_loaded = False
 
+
 def get_model():
     global model, _model_loaded
     if _model_loaded:
@@ -27,6 +28,7 @@ def get_model():
     _model_loaded = True
     try:
         from ultralytics import YOLO
+
         m = YOLO("yolov8m.pt")
         try:
             if DEVICE == "cuda":
@@ -49,7 +51,11 @@ def sample_frames(frames, max_frames=MAX_FRAMES):
 
 def analyze_scene_objects(frames_dir):
     frames = sorted(
-        [os.path.join(frames_dir, f) for f in os.listdir(frames_dir) if f.endswith(".jpg")]
+        [
+            os.path.join(frames_dir, f)
+            for f in os.listdir(frames_dir)
+            if f.endswith(".jpg")
+        ]
     )
 
     if not frames:
@@ -84,13 +90,15 @@ def analyze_scene_objects(frames_dir):
     # convert simple object labels -> canonical object dicts
     canonical_objects = []
     for obj_label in objects:
-        canonical_objects.append({
-            "type": obj_label,
-            "model": None,
-            "year": None,
-            "color": None,
-            "details": json.dumps({"count": int(object_counter.get(obj_label, 0))})
-        })
+        canonical_objects.append(
+            {
+                "type": obj_label,
+                "model": None,
+                "year": None,
+                "color": None,
+                "details": json.dumps({"count": int(object_counter.get(obj_label, 0))}),
+            }
+        )
 
     actions = []
     if any(o["type"] == "person" for o in canonical_objects):
@@ -107,7 +115,7 @@ def analyze_scene_objects(frames_dir):
         "actions": actions,
         "background_activity": background_activity,
         "vfx_presence": False,
-        "cg_characters_present": False
+        "cg_characters_present": False,
     }
 
 
@@ -131,10 +139,7 @@ def main():
 
             if data:
                 scene_id = f"{movie}_{scene.replace('_frames','')}"
-                results.append({
-                    "scene_id": scene_id,
-                    **data
-                })
+                results.append({"scene_id": scene_id, **data})
 
         out_path = f"{OUTPUT_DIR}/{movie}_scene_objects.json"
         with open(out_path, "w", encoding="utf-8") as f:

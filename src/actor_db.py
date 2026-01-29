@@ -5,6 +5,7 @@ meant as a lightweight, testable replacement for a production actor store.
 
 Supports persistence: save() / load() for JSON-based storage.
 """
+
 from typing import Dict, List, Any, Optional, Tuple
 import math
 import json
@@ -27,12 +28,16 @@ class ActorDB:
         self.dim = dim
         self._actors: Dict[str, Dict[str, Any]] = {}
 
-    def add_actor(self, name: str, embedding: List[float], metadata: Dict[str, Any] = None):
+    def add_actor(
+        self, name: str, embedding: List[float], metadata: Dict[str, Any] = None
+    ):
         if len(embedding) != self.dim:
             raise ValueError("embedding dimension mismatch")
         self._actors[name] = {"embedding": embedding, "metadata": metadata or {}}
 
-    def find_best(self, embedding: List[float], threshold: float = 0.7) -> Dict[str, Any]:
+    def find_best(
+        self, embedding: List[float], threshold: float = 0.7
+    ) -> Dict[str, Any]:
         best_name: Optional[str] = None
         best_score = -1.0
         for name, rec in self._actors.items():
@@ -41,7 +46,11 @@ class ActorDB:
                 best_score = s
                 best_name = name
         if best_name is None or best_score < threshold:
-            return {"matched": False, "name": "unknown", "confidence": float(best_score if best_score >= 0 else 0.0)}
+            return {
+                "matched": False,
+                "name": "unknown",
+                "confidence": float(best_score if best_score >= 0 else 0.0),
+            }
         return {"matched": True, "name": best_name, "confidence": float(best_score)}
 
     def list_actors(self) -> List[str]:

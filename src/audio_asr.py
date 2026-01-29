@@ -1,4 +1,4 @@
-  """Lightweight ASR wrapper with a mock mode for CI and environments without models.
+"""Lightweight ASR wrapper with a mock mode for CI and environments without models.
 
 Design goals:
 - Minimal external dependencies for tests (mock mode returns deterministic transcripts)

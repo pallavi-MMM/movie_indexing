@@ -9,7 +9,10 @@ def test_merge_vlm_scene_summary_and_keywords():
             "scene_summary": "A tense exchange at dusk.",
             "keywords_auto_generated": ["tense", "exchange"],
             "field_confidences": {"scene_summary": 0.8, "keywords_auto_generated": 0.8},
-            "field_provenance": {"scene_summary": ["vlm_v1"], "keywords_auto_generated": ["vlm_v1"]},
+            "field_provenance": {
+                "scene_summary": ["vlm_v1"],
+                "keywords_auto_generated": ["vlm_v1"],
+            },
         },
         "source": "vlm_v1",
     }
@@ -20,8 +23,14 @@ def test_merge_vlm_scene_summary_and_keywords():
             "movie_id": "m1",
             "scene_summary": "A heated argument between two characters.",
             "keywords_auto_generated": ["argument", "characters"],
-            "field_confidences": {"scene_summary": 0.92, "keywords_auto_generated": 0.85},
-            "field_provenance": {"scene_summary": ["vlm_v2"], "keywords_auto_generated": ["vlm_v2"]},
+            "field_confidences": {
+                "scene_summary": 0.92,
+                "keywords_auto_generated": 0.85,
+            },
+            "field_provenance": {
+                "scene_summary": ["vlm_v2"],
+                "keywords_auto_generated": ["vlm_v2"],
+            },
         },
         "source": "vlm_v2",
     }

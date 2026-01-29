@@ -4,6 +4,7 @@ This is a mock-first implementation: it uses `FaceTracker(mode='mock')` and
 `ActorDB`/`ActorLinker` to map tracks to actor names with confidences and
 screen-time aggregation.
 """
+
 from typing import Dict, Any, List
 
 from src.face_tracker import FaceTracker
@@ -17,12 +18,16 @@ class FaceActorPipeline:
         self.actor_db = ActorDB(dim=dim)
         self.linker = ActorLinker(mode="mock")
 
-    def register_actor(self, name: str, embedding: List[float], metadata: Dict[str, Any] = None):
+    def register_actor(
+        self, name: str, embedding: List[float], metadata: Dict[str, Any] = None
+    ):
         self.actor_db.add_actor(name, embedding, metadata)
         # keep ActorLinker in sync
         self.linker.add_actor(name, embedding)
 
-    def process_video(self, video_path: str, max_frames: int = 30) -> List[Dict[str, Any]]:
+    def process_video(
+        self, video_path: str, max_frames: int = 30
+    ) -> List[Dict[str, Any]]:
         tracks = self.tracker.track(video_path, max_frames=max_frames)
         # Aggregate tracks into characters with screen_time and provenance
         chars: Dict[str, Dict[str, Any]] = {}
@@ -36,7 +41,12 @@ class FaceActorPipeline:
             conf = match.get("confidence", 0.0)
             prov = ["face_tracker"]
             if name not in chars:
-                chars[name] = {"name": name, "screen_time": screen_time, "confidence": conf, "provenance": prov}
+                chars[name] = {
+                    "name": name,
+                    "screen_time": screen_time,
+                    "confidence": conf,
+                    "provenance": prov,
+                }
             else:
                 chars[name]["screen_time"] += screen_time
                 chars[name]["confidence"] = max(chars[name]["confidence"], conf)

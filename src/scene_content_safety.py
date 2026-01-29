@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 
-
 # --- Heuristic keyword sets ---
 VIOLENT_OBJECTS = {"knife", "gun", "blood", "weapon", "sword"}
 DRUG_OBJECTS = {"syringe", "pill", "drug"}
@@ -100,7 +99,9 @@ def main():
             break
 
     if not input_json:
-        raise FileNotFoundError(f"No suitable final JSON found for movie '{movie}'; checked: {candidates}")
+        raise FileNotFoundError(
+            f"No suitable final JSON found for movie '{movie}'; checked: {candidates}"
+        )
     output_json = f"outputs/scene_index/{movie}_FINAL_WITH_SAFETY.json"
 
     with open(input_json, "r", encoding="utf-8") as f:
@@ -110,12 +111,16 @@ def main():
         # validate scene shape before assessing (non-blocking)
         try:
             from scene_schema import validate_scene
+
             valid, msgs = validate_scene(scene)
             import os
+
             strict = os.getenv("SCHEMA_STRICT", "0").lower() in ("1", "true", "yes")
             if not valid:
                 if strict:
-                    raise RuntimeError(f"Scene validation failed for {scene.get('scene_id')}: {msgs}")
+                    raise RuntimeError(
+                        f"Scene validation failed for {scene.get('scene_id')}: {msgs}"
+                    )
                 print(f"[WARN] Scene {scene.get('scene_id')} failed validation: {msgs}")
         except Exception:
             # don't break the pipeline for validator errors

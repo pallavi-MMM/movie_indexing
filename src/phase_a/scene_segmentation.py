@@ -7,6 +7,7 @@ import cv2
 try:
     from scenedetect import VideoManager, SceneManager
     from scenedetect.detectors import ContentDetector
+
     HAS_SCENEDETECT = True
 except Exception:
     HAS_SCENEDETECT = False
@@ -19,14 +20,16 @@ CONTENT_THRESHOLD = 27.0
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
 def timecode_to_seconds(timecode):
     # Support both PySceneDetect timecode objects and plain float seconds (fallback)
-    if hasattr(timecode, 'get_seconds'):
+    if hasattr(timecode, "get_seconds"):
         return timecode.get_seconds()
     try:
         return float(timecode)
     except Exception:
-        raise RuntimeError('Unsupported timecode type')
+        raise RuntimeError("Unsupported timecode type")
+
 
 def seconds_to_time_str(seconds):
     td = timedelta(seconds=seconds)
@@ -35,6 +38,7 @@ def seconds_to_time_str(seconds):
     h, rem = divmod(total_seconds, 3600)
     m, s = divmod(rem, 60)
     return f"{h:02}:{m:02}:{s:02}.{millis:03}"
+
 
 def detect_raw_scenes(video_path):
     if HAS_SCENEDETECT:
@@ -52,7 +56,10 @@ def detect_raw_scenes(video_path):
     # Fallback: split video into fixed-length segments when scenedetect not installed
     duration = get_video_duration(video_path)
     # Aim for segments roughly MIN_SCENE_DURATION_SEC long, but cap to 60s for stability
-    seg_len = max(MIN_SCENE_DURATION_SEC, min(60.0, duration / max(1, int(duration / MIN_SCENE_DURATION_SEC))))
+    seg_len = max(
+        MIN_SCENE_DURATION_SEC,
+        min(60.0, duration / max(1, int(duration / MIN_SCENE_DURATION_SEC))),
+    )
     scene_list = []
     start = 0.0
     while start < duration:
@@ -60,6 +67,7 @@ def detect_raw_scenes(video_path):
         scene_list.append((start, end))
         start = end
     return scene_list
+
 
 def merge_scenes(scene_list, video_duration):
     merged = []
@@ -122,21 +130,23 @@ def process_movie(movie_path):
 
     scenes_json = []
     for idx, (start, end) in enumerate(merged_scenes, start=1):
-        scenes_json.append({
-            "scene_id": f"scene_{idx:04}",
-            "start_time": seconds_to_time_str(start),
-            "end_time": seconds_to_time_str(end),
-            "duration": round(end - start, 2),
-            "transition_type": "cut",
-            "transition_confidence": 0.9
-        })
+        scenes_json.append(
+            {
+                "scene_id": f"scene_{idx:04}",
+                "start_time": seconds_to_time_str(start),
+                "end_time": seconds_to_time_str(end),
+                "duration": round(end - start, 2),
+                "transition_type": "cut",
+                "transition_confidence": 0.9,
+            }
+        )
 
     output = {
         "movie_id": movie_name,
         "source_file": movie_path,
         "scene_count": len(scenes_json),
         "min_scene_duration_sec": MIN_SCENE_DURATION_SEC,
-        "scenes": scenes_json
+        "scenes": scenes_json,
     }
 
     out_path = os.path.join(OUTPUT_DIR, f"{movie_name}_scenes.json")
@@ -144,6 +154,7 @@ def process_movie(movie_path):
         json.dump(output, f, indent=2)
 
     print(f"[OK] {movie_name}: {len(scenes_json)} scenes written")
+
 
 def main():
     target = globals().get("TARGET_MOVIE")
@@ -155,6 +166,7 @@ def main():
             # skip other movies when a target is provided
             continue
         process_movie(os.path.join(MOVIES_DIR, file))
+
 
 if __name__ == "__main__":
     main()

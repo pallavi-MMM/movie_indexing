@@ -34,11 +34,15 @@ def test_actor_merge_happy_path(tmp_path, monkeypatch):
         }
     ]
     os.makedirs("outputs/scene_actor_index", exist_ok=True)
-    with open(f"outputs/scene_actor_index/{movie}_scene_actors.json", "w", encoding="utf-8") as f:
+    with open(
+        f"outputs/scene_actor_index/{movie}_scene_actors.json", "w", encoding="utf-8"
+    ) as f:
         json.dump(actor, f)
 
     builder.build_movie_json(movie)
-    out = json.load(open(f"outputs/scene_index/{movie}_scenes_final.json", "r", encoding="utf-8"))
+    out = json.load(
+        open(f"outputs/scene_index/{movie}_scenes_final.json", "r", encoding="utf-8")
+    )
     assert out[0]["characters"] == ["Alice"]
     assert out[0]["character_dominance_ranking"][0]["character"] == "Alice"
 
@@ -52,6 +56,8 @@ def test_actor_missing_or_empty(tmp_path):
         os.remove(path)
 
     builder.build_movie_json(movie)  # should not raise
-    out = json.load(open(f"outputs/scene_index/{movie}_scenes_final.json", "r", encoding="utf-8"))
+    out = json.load(
+        open(f"outputs/scene_index/{movie}_scenes_final.json", "r", encoding="utf-8")
+    )
     assert out[0]["characters"] == []
     assert out[0]["character_dominance_ranking"] == []

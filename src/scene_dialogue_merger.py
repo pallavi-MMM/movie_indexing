@@ -36,18 +36,22 @@ def main():
         # fallback: build minimal scene list from segments file
         segments_path = os.path.join("outputs", "scenes", f"{movie}_scenes.json")
         if not os.path.exists(segments_path):
-            print(f"[WARN] Dialogue merger: no master or scenes file found for {movie}, skipping")
+            print(
+                f"[WARN] Dialogue merger: no master or scenes file found for {movie}, skipping"
+            )
             return
         with open(segments_path, "r", encoding="utf-8") as f:
             segs = json.load(f).get("scenes", [])
         scenes = []
         for s in segs:
-            scenes.append({
-                "scene_id": s.get("scene_id"),
-                "start_time": s.get("start_time"),
-                "end_time": s.get("end_time"),
-                "duration": s.get("duration"),
-            })
+            scenes.append(
+                {
+                    "scene_id": s.get("scene_id"),
+                    "start_time": s.get("start_time"),
+                    "end_time": s.get("end_time"),
+                    "duration": s.get("duration"),
+                }
+            )
 
     dialogue_data = load_dialogue_data(movie)
 

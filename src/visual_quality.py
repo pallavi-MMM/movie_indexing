@@ -7,11 +7,16 @@ Heuristics:
 - If `bitrate` numeric is present, mark `bitrate_drop_detected` True when below threshold.
 - Otherwise provide low-confidence defaults.
 """
+
 from typing import Dict, Any
 
 
 def analyze_visual_quality(scene: Dict[str, Any]) -> Dict[str, Any]:
-    flags = {"black_frames_detected": False, "flash_frames_detected": False, "bitrate_drop_detected": False}
+    flags = {
+        "black_frames_detected": False,
+        "flash_frames_detected": False,
+        "bitrate_drop_detected": False,
+    }
     confidences = {}
     provenance = {}
 
@@ -45,7 +50,11 @@ def analyze_visual_quality(scene: Dict[str, Any]) -> Dict[str, Any]:
             confidences[k] = 0.1
             provenance[k] = ["mock_visual_quality"]
 
-    return {"quality_flags": flags, "field_confidences": confidences, "field_provenance": provenance}
+    return {
+        "quality_flags": flags,
+        "field_confidences": confidences,
+        "field_provenance": provenance,
+    }
 
 
 __all__ = ["analyze_visual_quality"]

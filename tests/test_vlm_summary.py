@@ -5,7 +5,10 @@ def test_summarize_from_dialogue_and_characters():
     scene = {
         "scene_id": "s1",
         "movie_id": "m1",
-        "dialogue_text": [{"character": "Alice", "line": "We must leave now."}, {"character": "Bob", "line": "No, stay."}],
+        "dialogue_text": [
+            {"character": "Alice", "line": "We must leave now."},
+            {"character": "Bob", "line": "No, stay."},
+        ],
         "characters": [{"name": "Alice"}, {"name": "Bob"}],
     }
     out = summarize_scene(scene)

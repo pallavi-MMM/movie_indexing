@@ -14,7 +14,10 @@ def test_merge_characters_aggregates_screen_time_and_confidence():
     s2 = {
         "scene": {
             "scene_id": "s1",
-            "characters": [{"name": "Alice", "screen_time": 3.0}, {"name": "Bob", "screen_time": 2.0}],
+            "characters": [
+                {"name": "Alice", "screen_time": 3.0},
+                {"name": "Bob", "screen_time": 2.0},
+            ],
             "field_confidences": {"characters": 0.8},
             "field_provenance": {"characters": ["face_tracker_v2"]},
         },
@@ -27,7 +30,9 @@ def test_merge_characters_aggregates_screen_time_and_confidence():
     assert abs(chars["Alice"]["screen_time"] - 8.0) < 1e-6
     assert abs(chars["Bob"]["screen_time"] - 2.0) < 1e-6
     # Check per-character confidences mapped in field_confidences
-    assert "field_confidences" in merged and isinstance(merged["field_confidences"], dict)
+    assert "field_confidences" in merged and isinstance(
+        merged["field_confidences"], dict
+    )
     confs = merged["field_confidences"]["characters"]
     assert confs.get("Alice") == 0.9
     assert confs.get("Bob") == 0.8

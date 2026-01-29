@@ -14,6 +14,7 @@ class TestDialogueMergerFallback(unittest.TestCase):
 
     def tearDown(self):
         import shutil
+
         if os.path.exists(self.scenes_dir):
             shutil.rmtree(self.scenes_dir)
         if os.path.exists(self.dialogue_dir):
@@ -31,16 +32,27 @@ class TestDialogueMergerFallback(unittest.TestCase):
         segs = {
             "movie_id": movie,
             "scenes": [
-                {"scene_id": "scene_0001", "start_time": "00:00:00.000", "end_time": "00:00:05.000", "duration": 5},
-            ]
+                {
+                    "scene_id": "scene_0001",
+                    "start_time": "00:00:00.000",
+                    "end_time": "00:00:05.000",
+                    "duration": 5,
+                },
+            ],
         }
-        with open(os.path.join(self.scenes_dir, f"{movie}_scenes.json"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(self.scenes_dir, f"{movie}_scenes.json"), "w", encoding="utf-8"
+        ) as f:
             json.dump(segs, f)
 
         # create per-scene dialogue
         out_d = os.path.join(self.dialogue_dir, movie)
         os.makedirs(out_d, exist_ok=True)
-        scene1 = {"scene_id": "scene_0001", "dialogue_text": [{"character": "A", "line": "hello"}], "dialogue_speed_wpm": 120}
+        scene1 = {
+            "scene_id": "scene_0001",
+            "dialogue_text": [{"character": "A", "line": "hello"}],
+            "dialogue_speed_wpm": 120,
+        }
         with open(os.path.join(out_d, "scene_0001.json"), "w", encoding="utf-8") as f:
             json.dump(scene1, f)
 
@@ -48,7 +60,9 @@ class TestDialogueMergerFallback(unittest.TestCase):
         setattr(m, "TARGET_MOVIE", movie)
         m.main()
 
-        out_path = os.path.join(self.repo, "outputs", "scene_index", f"{movie}_FINAL_WITH_DIALOGUE.json")
+        out_path = os.path.join(
+            self.repo, "outputs", "scene_index", f"{movie}_FINAL_WITH_DIALOGUE.json"
+        )
         self.assertTrue(os.path.exists(out_path))
         with open(out_path, "r", encoding="utf-8") as f:
             data = json.load(f)

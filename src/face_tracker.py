@@ -7,6 +7,7 @@ API:
 The mock mode returns deterministic tracks with per-track representative embeddings so
 downstream modules (actor linker) can be exercised without heavy dependencies.
 """
+
 from typing import Dict, List, Any
 import hashlib
 
@@ -19,6 +20,7 @@ class FaceTracker:
             # For now, default to mock when no heavy deps are available.
             try:
                 import insightface  # type: ignore
+
                 self.mode = "gpu"
             except Exception:
                 self.mode = "mock"
@@ -79,8 +81,16 @@ class FaceTracker:
                 tid += 1
                 # bounding box
                 x1, y1, x2, y2 = map(float, r.bbox.flatten().tolist())
-                emb = r.embedding.tolist() if hasattr(r, "embedding") else [0.0, 0.0, 0.0]
-                tracks.append({"track_id": tid, "frames": [{"ts": 0.0, "bbox": [x1, y1, x2, y2]}], "embedding": emb})
+                emb = (
+                    r.embedding.tolist() if hasattr(r, "embedding") else [0.0, 0.0, 0.0]
+                )
+                tracks.append(
+                    {
+                        "track_id": tid,
+                        "frames": [{"ts": 0.0, "bbox": [x1, y1, x2, y2]}],
+                        "embedding": emb,
+                    }
+                )
         return tracks
 
     def _mock_track(self, video_path: str, max_frames: int) -> List[Dict[str, Any]]:
@@ -94,8 +104,8 @@ class FaceTracker:
             for i in range(min(max_frames, 8)):
                 ts = float(i) * 0.5
                 # simple deterministic bbox based on hashes
-                x1 = (10 + ((h >> (t + i)) % 50))
-                y1 = (20 + ((h >> (t + i + 3)) % 40))
+                x1 = 10 + ((h >> (t + i)) % 50)
+                y1 = 20 + ((h >> (t + i + 3)) % 40)
                 x2 = x1 + 60
                 y2 = y1 + 80
                 frames.append({"ts": ts, "bbox": [x1, y1, x2, y2]})

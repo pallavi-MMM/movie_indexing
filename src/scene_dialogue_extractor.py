@@ -6,17 +6,14 @@ import torch
 
 # Use central device selection (GPU when available)
 from src.device import DEVICE
-MODEL_SIZE = "medium"   # change to "small" if GPU memory is low
+
+MODEL_SIZE = "medium"  # change to "small" if GPU memory is low
 COMPUTE_TYPE = "float16" if DEVICE.startswith("cuda") else "int8"
 
 OUT_DIR = "outputs/scene_dialogue"
 os.makedirs(OUT_DIR, exist_ok=True)
 
-model = WhisperModel(
-    MODEL_SIZE,
-    device=DEVICE,
-    compute_type=COMPUTE_TYPE
-)
+model = WhisperModel(MODEL_SIZE, device=DEVICE, compute_type=COMPUTE_TYPE)
 
 
 def words_per_minute(text, duration_sec):
@@ -28,10 +25,7 @@ def words_per_minute(text, duration_sec):
 
 def extract_dialogue(scene_id, audio_path):
     segments, info = model.transcribe(
-        audio_path,
-        beam_size=5,
-        vad_filter=True,
-        language="en"
+        audio_path, beam_size=5, vad_filter=True, language="en"
     )
 
     dialogue = []
@@ -45,10 +39,7 @@ def extract_dialogue(scene_id, audio_path):
         # include timestamps when available to enable speaker alignment
         seg_start = getattr(seg, "start", None)
         seg_end = getattr(seg, "end", None)
-        item = {
-            "character": "",     # NOT guessed yet
-            "line": line
-        }
+        item = {"character": "", "line": line}  # NOT guessed yet
         if seg_start is not None:
             item["start"] = round(float(seg_start), 3)
         if seg_end is not None:
@@ -65,7 +56,7 @@ def extract_dialogue(scene_id, audio_path):
         "dialogue_text": dialogue,
         "dialogue_speed_wpm": wpm,
         "audio_clarity_score": round(info.language_probability, 2),
-        "profanity_present": None  # filled later by dedicated filter
+        "profanity_present": None,  # filled later by dedicated filter
     }
 
 

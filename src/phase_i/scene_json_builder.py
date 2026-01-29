@@ -11,6 +11,7 @@ OUTPUT_DIR = "outputs/scene_index"
 
 # ---------------- HELPERS ----------------
 
+
 def load_json(path):
     if not os.path.exists(path):
         raise FileNotFoundError(f"JSON file not found: {path}")
@@ -27,6 +28,7 @@ def save_json(data, path):
 
 # ---------------- CORE LOGIC ----------------
 
+
 def build_movie_json(movie_id):
     print("RUNNING FILE:", __file__)
     print("Building scene JSON for movie:", movie_id)
@@ -38,7 +40,9 @@ def build_movie_json(movie_id):
     try:
         actor_data = load_json(actor_path)
     except FileNotFoundError:
-        print(f"[WARN] Actor file not found: {actor_path} — proceeding with empty actor list")
+        print(
+            f"[WARN] Actor file not found: {actor_path} — proceeding with empty actor list"
+        )
         actor_data = []
 
     # ---- Validate scene schema ----
@@ -81,30 +85,22 @@ def build_movie_json(movie_id):
 
         scene_json = {
             "scene_id": scene_id,
-
             "start_time": seg.get("start_time"),
             "end_time": seg.get("end_time"),
             "duration": seg.get("duration"),
-
             "transition_type": seg.get("transition_type"),
             "transition_confidence": seg.get("transition_confidence"),
-
             "scene_summary": "",
             "scene_type": "",
             "importance_score": 0,
-
-            "characters": actor_map
-                .get(scene_id, {})
-                .get("characters", []),
-
-            "character_dominance_ranking": actor_map
-                .get(scene_id, {})
-                .get("character_dominance_ranking", []),
-
+            "characters": actor_map.get(scene_id, {}).get("characters", []),
+            "character_dominance_ranking": actor_map.get(scene_id, {}).get(
+                "character_dominance_ranking", []
+            ),
             "assets": {
                 "frames_dir": f"{asset_scene_dir}/frames",
-                "audio_dir": f"{asset_scene_dir}/audio"
-            }
+                "audio_dir": f"{asset_scene_dir}/audio",
+            },
         }
 
         scenes_out.append(scene_json)
@@ -118,6 +114,7 @@ def build_movie_json(movie_id):
 
 
 # ---------------- ENTRY ----------------
+
 
 def main():
     movie_id = "Ravi_teja"  # change as needed

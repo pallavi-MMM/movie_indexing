@@ -7,6 +7,7 @@ API:
 
 The mock mode uses small float vectors and cosine similarity.
 """
+
 from typing import Dict, List, Optional
 import math
 
@@ -39,8 +40,18 @@ class ActorLinker:
                 best_score = s
                 best_name = name
         if best_name is None or best_score < threshold:
-            return {"matched": False, "name": "unknown", "confidence": float(best_score), "distance": 1.0 - float(best_score)}
-        return {"matched": True, "name": best_name, "confidence": float(best_score), "distance": 1.0 - float(best_score)}
+            return {
+                "matched": False,
+                "name": "unknown",
+                "confidence": float(best_score),
+                "distance": 1.0 - float(best_score),
+            }
+        return {
+            "matched": True,
+            "name": best_name,
+            "confidence": float(best_score),
+            "distance": 1.0 - float(best_score),
+        }
 
 
 __all__ = ["ActorLinker"]

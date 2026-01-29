@@ -17,7 +17,7 @@ def analyze_audio(audio_path):
     return {
         "emotion_arousal_score": round(float(rms), 4),
         "emotion_scene_variation_score": round(float(zcr), 4),
-        "audio_activity_score": round(float(tempo), 2)
+        "audio_activity_score": round(float(tempo), 2),
     }
 
 
@@ -37,15 +37,14 @@ def main():
 
         scores = analyze_audio(scene_path)
 
-        out = {
-            "scene_id": scene_id,
-            **scores
-        }
+        out = {"scene_id": scene_id, **scores}
 
         # write into per-movie folder to avoid name collisions across movies
         movie_out_dir = os.path.join(OUT_DIR, movie)
         os.makedirs(movie_out_dir, exist_ok=True)
-        with open(os.path.join(movie_out_dir, f"{scene_id}.json"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(movie_out_dir, f"{scene_id}.json"), "w", encoding="utf-8"
+        ) as f:
             json.dump(out, f, indent=2)
 
         print(f"[EMOTION] {scene_id} done")

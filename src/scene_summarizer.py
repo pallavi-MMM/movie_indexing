@@ -9,7 +9,7 @@ Analyzes:
   - Actions and activities occurring
 
 Generates narrative summaries that capture the essence of each scene.
-  
+
 Usage (standalone):
   python src/scene_summarizer.py <path_to_complete_schema.json>
 
@@ -21,7 +21,6 @@ import json
 import sys
 import os
 import re
-
 
 # Global movie name (set by pipeline if running as module)
 MOVIE_NAME = "Alanati ramachandrudu - trailer"
@@ -89,19 +88,19 @@ ACTION_VERBS = {
 def extract_dialogue_content(dialogue):
     """
     Analyze dialogue text to extract key content, emotions, and topics.
-    
+
     Args:
         dialogue: List of dialogue entries with 'line' field
-    
+
     Returns:
         Dict with extracted content, emotions, keywords, speakers
     """
     if not dialogue:
         return {"content": "", "keywords": [], "speakers": set(), "emotions": []}
-    
+
     full_text = " ".join(d.get("line", "").lower() for d in dialogue)
     speakers = set(d.get("speaker", "unknown") for d in dialogue if d.get("speaker"))
-    
+
     # Extract keywords
     keywords = []
     emotions = []
@@ -109,25 +108,25 @@ def extract_dialogue_content(dialogue):
         if keyword in full_text:
             keywords.append(label)
             emotions.append(label)
-    
+
     # Check for question density
     question_count = full_text.count("?")
     exclamation_count = full_text.count("!")
-    
+
     return {
         "content": full_text,
         "keywords": list(set(keywords)),
         "speakers": speakers,
         "emotions": list(set(emotions)),
         "question_density": question_count / max(len(dialogue), 1),
-        "exclamation_density": exclamation_count / max(len(dialogue), 1)
+        "exclamation_density": exclamation_count / max(len(dialogue), 1),
     }
 
 
 def analyze_scene_context(scene):
     """
     Analyze multiple contextual factors of a scene.
-    
+
     Returns:
         Dict with scene context analysis
     """
@@ -140,7 +139,7 @@ def analyze_scene_context(scene):
     dialogue_speed = scene.get("dialogue_speed_wpm", 0)
     background_music = scene.get("background_music_mood", "")
     viewer_emotion = scene.get("viewer_emotion_prediction", "")
-    
+
     return {
         "location": location,
         "time_of_day": time_of_day,
@@ -150,17 +149,17 @@ def analyze_scene_context(scene):
         "camera_movement": camera,
         "dialogue_speed": dialogue_speed,
         "background_music": background_music,
-        "viewer_emotion": viewer_emotion
+        "viewer_emotion": viewer_emotion,
     }
 
 
 def build_narrative_summary(scene):
     """
     Build a detailed narrative summary by analyzing dialogue, context, and emotions.
-    
+
     Args:
         scene: Complete scene dict
-    
+
     Returns:
         str: Narrative scene summary (40-80 words)
     """
@@ -169,24 +168,24 @@ def build_narrative_summary(scene):
     characters = scene.get("characters", [])
     actions = scene.get("actions", [])
     background_activity = scene.get("background_activity", [])
-    
+
     dialogue_analysis = extract_dialogue_content(dialogue)
     context = analyze_scene_context(scene)
-    
+
     # Determine narrative arc
     arousal = scene.get("emotion_arousal_score", 0)
     dialogue_intensity = len(dialogue)
     motion_intensity = context["motion_intensity"]
-    
+
     # Build summary components
     parts = []
-    
+
     # === SETTING & ATMOSPHERE ===
     setting = f"{context['time_of_day'].title()} {context['location']}"
     if context["lighting"] and context["lighting"] != "unknown":
         setting += f" ({context['lighting']} lighting)"
     parts.append(setting)
-    
+
     # === CHARACTER INVOLVEMENT ===
     char_description = ""
     if len(characters) >= 3:
@@ -197,7 +196,7 @@ def build_narrative_summary(scene):
         char_description = f"A solitary character"
     else:
         char_description = f"Characters are present"
-    
+
     # === DIALOGUE/INTERACTION ===
     interaction = ""
     if dialogue_intensity == 0:
@@ -210,12 +209,12 @@ def build_narrative_summary(scene):
         interaction = "engage in active discussion"
     else:
         interaction = "engage in intense dialogue"
-    
+
     # Add dialogue content if rich with emotion
     if dialogue_analysis["keywords"]:
         top_emotions = dialogue_analysis["keywords"][:2]
         interaction += f" about {', '.join(top_emotions)}"
-    
+
     # === MOOD & TENSION ===
     mood = ""
     if arousal >= 0.5:
@@ -226,29 +225,29 @@ def build_narrative_summary(scene):
         mood = "gentle unease"
     else:
         mood = "calm atmosphere"
-    
+
     # === VISUAL DYNAMICS ===
     dynamics = ""
     if motion_intensity > 50:
         dynamics = "with rapid movement"
     elif motion_intensity > 20:
         dynamics = "with moderate activity"
-    
+
     # === COMBINE INTO NARRATIVE ===
     if context["camera_movement"] and context["camera_movement"] != "static":
         dynamics += f" and {context['camera_movement']} camera work"
-    
+
     # Build final summary
     summary = f"{char_description} {interaction} in {setting.lower()}, creating {mood}"
-    
+
     if dynamics:
         summary += f" {dynamics}"
-    
+
     if context["background_music"] and context["background_music"] != "unknown":
         summary += f". Background score: {context['background_music']}."
     else:
         summary += "."
-    
+
     return summary.strip()
 
 
@@ -260,34 +259,34 @@ def build_scene_summary(scene):
 def regenerate_summaries(json_file_path):
     """
     Load complete schema JSON, regenerate all scene_summary fields, save back.
-    
+
     Args:
         json_file_path: Path to complete_schema.json
     """
     print(f"[SUMMARIZER] Loading: {json_file_path}")
-    
+
     with open(json_file_path, "r", encoding="utf-8") as f:
         schema = json.load(f)
-    
+
     scenes = schema.get("scenes", [])
     print(f"[SUMMARIZER] Processing {len(scenes)} scenes...")
-    
+
     updated_count = 0
     for scene in scenes:
         old_summary = scene.get("scene_summary", "")
         new_summary = build_scene_summary(scene)
-        
+
         scene["scene_summary"] = new_summary
         updated_count += 1
-        
+
         scene_id = scene.get("scene_id", "unknown")
         print(f"  [{scene_id}] {new_summary}")
-    
+
     # Save back
     print(f"[SUMMARIZER] Saving {updated_count} summaries to {json_file_path}...")
     with open(json_file_path, "w", encoding="utf-8") as f:
         json.dump(schema, f, indent=2, ensure_ascii=False)
-    
+
     print(f"[OK] Scene summaries regenerated -> {json_file_path}")
 
 
@@ -299,21 +298,23 @@ def main():
     """
     # Determine the JSON file to process
     json_file = None
-    
+
     # Prefer TARGET_MOVIE (set by run_pipeline.py) over sys.argv
-    target_movie = globals().get("TARGET_MOVIE") or globals().get("MOVIE_NAME") or MOVIE_NAME
-    
+    target_movie = (
+        globals().get("TARGET_MOVIE") or globals().get("MOVIE_NAME") or MOVIE_NAME
+    )
+
     # Only use sys.argv if it's a file path (not a command-line flag)
     if len(sys.argv) > 1 and not sys.argv[1].startswith("--"):
         json_file = sys.argv[1]
     else:
         os.makedirs(OUTPUT_JSON_DIR, exist_ok=True)
         json_file = f"{OUTPUT_JSON_DIR}/{target_movie}_complete_schema.json"
-    
+
     if not os.path.exists(json_file):
         print(f"[WARN] Scene summary file not found: {json_file}")
         return
-    
+
     regenerate_summaries(json_file)
 
 

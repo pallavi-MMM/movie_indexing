@@ -28,7 +28,9 @@ def build_actor_map(actor_json_path: str) -> Dict[str, dict]:
     return m
 
 
-def map_speakers_to_actors(speaker_segments: List[dict], actor_item: dict) -> Dict[str, Optional[str]]:
+def map_speakers_to_actors(
+    speaker_segments: List[dict], actor_item: dict
+) -> Dict[str, Optional[str]]:
     """Return mapping from speaker id (e.g., SPEAKER_00) to actor name (or None).
 
     Strategy:
@@ -38,7 +40,11 @@ def map_speakers_to_actors(speaker_segments: List[dict], actor_item: dict) -> Di
     if not speaker_segments or not actor_item:
         return {}
 
-    actors = [r.get("character") for r in actor_item.get("character_dominance_ranking", []) if r.get("character")]
+    actors = [
+        r.get("character")
+        for r in actor_item.get("character_dominance_ranking", [])
+        if r.get("character")
+    ]
     if not actors:
         actors = actor_item.get("characters", []) or []
     if not actors:
@@ -88,7 +94,9 @@ def process_movie(movie: str):
             data = json.load(f)
         sid = data.get("scene_id") or os.path.splitext(fn)[0]
         sid_candidate = sid
-        actor_item = actor_map.get(sid_candidate) or actor_map.get(_strip_movie_prefix(sid_candidate))
+        actor_item = actor_map.get(sid_candidate) or actor_map.get(
+            _strip_movie_prefix(sid_candidate)
+        )
         if not actor_item:
             print(f"[MAPPER_ACTOR] No actor data for scene {sid}, skipping")
             continue
@@ -103,7 +111,9 @@ def process_movie(movie: str):
             en = seg.get("end")
             if not sp:
                 continue
-            speaker_segments.append({"speaker": sp, "start": st or 0.0, "end": en or 0.0})
+            speaker_segments.append(
+                {"speaker": sp, "start": st or 0.0, "end": en or 0.0}
+            )
 
         if not speaker_segments:
             print(f"[MAPPER_ACTOR] No speaker segments for {sid}, skipping")

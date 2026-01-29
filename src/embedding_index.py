@@ -5,6 +5,7 @@ prototyping. It supports adding scene embeddings and nearest-neighbor queries
 using cosine similarity. The module is mock-friendly and intended to be
 replaced with a production vector DB (FAISS/annoy/Opensearch) later.
 """
+
 from typing import Dict, List, Any, Tuple
 import math
 
@@ -25,12 +26,16 @@ class EmbeddingIndex:
         self.dim = dim
         self._store: Dict[str, Dict[str, Any]] = {}
 
-    def add(self, scene_id: str, embedding: List[float], metadata: Dict[str, Any] = None):
+    def add(
+        self, scene_id: str, embedding: List[float], metadata: Dict[str, Any] = None
+    ):
         if len(embedding) != self.dim:
             raise ValueError("embedding dimension mismatch")
         self._store[scene_id] = {"embedding": embedding, "metadata": metadata or {}}
 
-    def query(self, embedding: List[float], top_k: int = 5) -> List[Tuple[str, float, Dict[str, Any]]]:
+    def query(
+        self, embedding: List[float], top_k: int = 5
+    ) -> List[Tuple[str, float, Dict[str, Any]]]:
         if len(embedding) != self.dim:
             raise ValueError("embedding dimension mismatch")
         scores = []

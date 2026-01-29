@@ -28,20 +28,30 @@ os.makedirs(SEGMENTS_DIR, exist_ok=True)
 os.makedirs(SCENE_INDEX_DIR, exist_ok=True)
 
 # create minimal scenes file
-scenes = {"scenes": [{"scene_id": "scene_0001", "start_time": 0, "end_time": 10, "duration": 10}]}
+scenes = {
+    "scenes": [
+        {"scene_id": "scene_0001", "start_time": 0, "end_time": 10, "duration": 10}
+    ]
+}
 with open(os.path.join(SCENES_DIR, f"{movie}_scenes.json"), "w", encoding="utf-8") as f:
     json.dump(scenes, f, indent=2)
 
 # create a simple segment file for the same movie
-segment = {"scene_id": "scene_0001", "scene_type": "dialogue", "scene_summary": "a scene"}
-with open(os.path.join(SEGMENTS_DIR, f"{movie}_scene_0001.json"), "w", encoding="utf-8") as f:
+segment = {
+    "scene_id": "scene_0001",
+    "scene_type": "dialogue",
+    "scene_summary": "a scene",
+}
+with open(
+    os.path.join(SEGMENTS_DIR, f"{movie}_scene_0001.json"), "w", encoding="utf-8"
+) as f:
     json.dump(segment, f, indent=2)
 
 # set env so resolver finds this movie
 os.environ["MOVIE_NAME"] = movie
 
 # run merger
-mod = importlib.import_module('src.scene_master_merger')
+mod = importlib.import_module("src.scene_master_merger")
 mod.main()
 
 # verify output

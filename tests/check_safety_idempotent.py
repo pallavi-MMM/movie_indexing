@@ -23,11 +23,23 @@ def main():
 
     # compare baseline vs updated (non-exact order-insensitive compare of the dicts)
     for b, u in zip(baseline, updated):
-        if b.get("violence_level") != u.get("violence_level") or b.get("age_rating_suggestion") != u.get("age_rating_suggestion"):
-            print("DIFFERENT:", b.get("scene_id"), b.get("violence_level"), b.get("age_rating_suggestion"), "->", u.get("violence_level"), u.get("age_rating_suggestion"))
+        if b.get("violence_level") != u.get("violence_level") or b.get(
+            "age_rating_suggestion"
+        ) != u.get("age_rating_suggestion"):
+            print(
+                "DIFFERENT:",
+                b.get("scene_id"),
+                b.get("violence_level"),
+                b.get("age_rating_suggestion"),
+                "->",
+                u.get("violence_level"),
+                u.get("age_rating_suggestion"),
+            )
             return 2
 
-    print("OK: safety assessment idempotent for existing file (no change in core safety fields)")
+    print(
+        "OK: safety assessment idempotent for existing file (no change in core safety fields)"
+    )
     return 0
 
 

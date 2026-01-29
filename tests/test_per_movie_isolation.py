@@ -29,11 +29,21 @@ class TestPerMovieIsolation(unittest.TestCase):
                 shutil.rmtree(d)
 
     def _write_scene_and_segment(self, movie, scene_id, summary):
-        scenes = {"scenes": [{"scene_id": scene_id, "start_time": 0, "end_time": 5, "duration": 5}]}
-        with open(os.path.join(self.scenes_dir, f"{movie}_scenes.json"), "w", encoding="utf-8") as f:
+        scenes = {
+            "scenes": [
+                {"scene_id": scene_id, "start_time": 0, "end_time": 5, "duration": 5}
+            ]
+        }
+        with open(
+            os.path.join(self.scenes_dir, f"{movie}_scenes.json"), "w", encoding="utf-8"
+        ) as f:
             json.dump(scenes, f, indent=2)
         segment = {"scene_id": scene_id, "scene_summary": summary}
-        with open(os.path.join(self.seg_dir, f"{movie}_scene_0001.json"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(self.seg_dir, f"{movie}_scene_0001.json"),
+            "w",
+            encoding="utf-8",
+        ) as f:
             json.dump(segment, f, indent=2)
 
     def test_final_jsons_different_for_different_movies(self):

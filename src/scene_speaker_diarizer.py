@@ -28,11 +28,10 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # PIPELINE (THIS IS THE FIX)
 # --------------------------------------------------
 pipeline = Pipeline.from_pretrained(
-    "pyannote/speaker-diarization",
-    revision="main",
-    token=HF_TOKEN
+    "pyannote/speaker-diarization", revision="main", token=HF_TOKEN
 )
 pipeline.to(device)
+
 
 # --------------------------------------------------
 # DIARIZATION
@@ -40,22 +39,20 @@ pipeline.to(device)
 def diarize_scene(scene_id, audio_path):
     waveform, sample_rate = torchaudio.load(audio_path)
 
-    diarization = pipeline(
-        {"waveform": waveform, "sample_rate": sample_rate}
-    )
+    diarization = pipeline({"waveform": waveform, "sample_rate": sample_rate})
 
     segments = []
     for turn, _, speaker in diarization.itertracks(yield_label=True):
-        segments.append({
-            "speaker": speaker,
-            "start": round(float(turn.start), 2),
-            "end": round(float(turn.end), 2)
-        })
+        segments.append(
+            {
+                "speaker": speaker,
+                "start": round(float(turn.start), 2),
+                "end": round(float(turn.end), 2),
+            }
+        )
 
-    return {
-        "scene_id": scene_id,
-        "speaker_segments": segments
-    }
+    return {"scene_id": scene_id, "speaker_segments": segments}
+
 
 # --------------------------------------------------
 # MAIN
@@ -84,6 +81,7 @@ def main():
             json.dump(data, f, indent=2)
 
     print("[OK] Speaker diarization complete")
+
 
 if __name__ == "__main__":
     main()

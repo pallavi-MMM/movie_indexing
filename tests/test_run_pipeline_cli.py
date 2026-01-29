@@ -51,6 +51,7 @@ class TestRunPipelineCLI(unittest.TestCase):
 
         # capture stdout
         from io import StringIO
+
         old_stdout = sys.stdout
         try:
             sys.stdout = StringIO()
@@ -67,7 +68,9 @@ class TestRunPipelineCLI(unittest.TestCase):
         repo = os.path.dirname(os.path.dirname(__file__))
         assets = os.path.join(repo, "outputs", "scene_assets", movie)
         dialogue = os.path.join(repo, "outputs", "scene_dialogue", movie)
-        visual = os.path.join(repo, "outputs", "scene_visual_index", f"{movie}_scene_visuals.json")
+        visual = os.path.join(
+            repo, "outputs", "scene_visual_index", f"{movie}_scene_visuals.json"
+        )
         index = os.path.join(repo, "outputs", "scene_index", f"{movie}_FINAL.json")
 
         os.makedirs(assets, exist_ok=True)

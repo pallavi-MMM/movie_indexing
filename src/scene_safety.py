@@ -4,6 +4,7 @@ This module implements a deterministic, dependency-free safety analyzer used
 for CI and prototyping. It returns structured safety flags, per-field
 confidences, and provenance so the fusion step can consume them.
 """
+
 from typing import Dict, Any
 
 
@@ -59,7 +60,11 @@ def analyze_scene(scene: Dict[str, Any]) -> Dict[str, Any]:
             confidences[k] = 0.1
             provenance[k] = ["mock_scene_safety"]
 
-    return {"safety_flags": flags, "field_confidences": confidences, "field_provenance": provenance}
+    return {
+        "safety_flags": flags,
+        "field_confidences": confidences,
+        "field_provenance": provenance,
+    }
 
 
 __all__ = ["analyze_scene"]

@@ -1,6 +1,7 @@
 import os
 import json
 import torch
+
 # lazy import for open_clip (heavy) to avoid import-time failures
 import cv2
 import numpy as np
@@ -18,7 +19,9 @@ _ctx_model = None
 _ctx_preprocess = None
 _ctx_tokenizer = None
 from src.device import DEVICE as _ctx_device
+
 _ctx_loaded = False
+
 
 def load_context_model():
     global _ctx_model, _ctx_preprocess, _ctx_tokenizer, _ctx_loaded
@@ -28,6 +31,7 @@ def load_context_model():
     try:
         import open_clip
         from PIL import Image
+
         model, preprocess = open_clip.create_model_from_pretrained(
             "ViT-B-32", pretrained="laion2b_s34b_b79k"
         )
@@ -47,6 +51,7 @@ def load_context_model():
         _ctx_tokenizer = None
     return _ctx_model, _ctx_preprocess, _ctx_tokenizer
 
+
 # Conservative prompts only
 LOCATION_PROMPTS = [
     "a street",
@@ -54,14 +59,10 @@ LOCATION_PROMPTS = [
     "inside an office",
     "inside a hospital",
     "inside a vehicle",
-    "a market area"
+    "a market area",
 ]
 
-TIME_PROMPTS = [
-    "daytime",
-    "nighttime",
-    "indoor artificial lighting"
-]
+TIME_PROMPTS = ["daytime", "nighttime", "indoor artificial lighting"]
 
 INDOOR_OUTDOOR = {
     "a street": "outdoor",
@@ -69,7 +70,7 @@ INDOOR_OUTDOOR = {
     "inside a house": "indoor",
     "inside an office": "indoor",
     "inside a hospital": "indoor",
-    "inside a vehicle": "indoor"
+    "inside a vehicle": "indoor",
 }
 
 
@@ -83,7 +84,11 @@ def sample_frames(frames):
 @torch.no_grad()
 def classify_scene(frames_dir):
     frames = sorted(
-        [os.path.join(frames_dir, f) for f in os.listdir(frames_dir) if f.endswith(".jpg")]
+        [
+            os.path.join(frames_dir, f)
+            for f in os.listdir(frames_dir)
+            if f.endswith(".jpg")
+        ]
     )
 
     if not frames:
@@ -127,7 +132,7 @@ def classify_scene(frames_dir):
         "time_of_day": time_of_day.replace("time", ""),
         "indoor_outdoor": INDOOR_OUTDOOR.get(location, "unknown"),
         "vfx_presence": False,
-        "cg_characters_present": False
+        "cg_characters_present": False,
     }
 
 
@@ -151,10 +156,7 @@ def main():
 
             if data:
                 scene_id = f"{movie}_{scene.replace('_frames','')}"
-                results.append({
-                    "scene_id": scene_id,
-                    **data
-                })
+                results.append({"scene_id": scene_id, **data})
 
         out_path = f"{OUTPUT_DIR}/{movie}_scene_context.json"
         with open(out_path, "w", encoding="utf-8") as f:

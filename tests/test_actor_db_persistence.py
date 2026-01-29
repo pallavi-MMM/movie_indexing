@@ -1,4 +1,5 @@
 """Tests for ActorDB save/load persistence."""
+
 import tempfile
 import os
 from src.actor_db import ActorDB
@@ -15,7 +16,7 @@ def test_actor_db_save_and_load():
     db.add_actor("Bob", emb2, {"role": "supporting"})
 
     # Save to temp file
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
         temp_path = f.name
 
     try:
@@ -26,12 +27,12 @@ def test_actor_db_save_and_load():
         db2 = ActorDB.load(temp_path)
         assert db2.dim == 2
         assert set(db2.list_actors()) == {"Alice", "Bob"}
-        
+
         # Verify embeddings and metadata are intact
         result_alice = db2.find_best(emb1)
         assert result_alice["name"] == "Alice"
         assert result_alice["matched"] is True
-        
+
         result_bob = db2.find_best(emb2)
         assert result_bob["name"] == "Bob"
         assert result_bob["matched"] is True
@@ -44,10 +45,10 @@ def test_actor_db_save_and_load():
 def test_actor_db_save_empty():
     """Test that an empty ActorDB can be saved and loaded."""
     db = ActorDB(dim=256)
-    
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as f:
         temp_path = f.name
-    
+
     try:
         db.save(temp_path)
         db2 = ActorDB.load(temp_path)

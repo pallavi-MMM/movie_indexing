@@ -7,12 +7,20 @@ OUTPUT_JSON = None
 
 # Conservative profanity list (extend carefully)
 PROFANITY_WORDS = {
-    "fuck", "fucking", "shit", "bitch", "bastard",
-    "asshole", "damn", "bloody"
+    "fuck",
+    "fucking",
+    "shit",
+    "bitch",
+    "bastard",
+    "asshole",
+    "damn",
+    "bloody",
 }
+
 
 def normalize(text):
     return re.sub(r"[^a-zA-Z\s]", "", text.lower())
+
 
 def contains_profanity(dialogue_lines):
     for d in dialogue_lines:
@@ -21,6 +29,7 @@ def contains_profanity(dialogue_lines):
         if words & PROFANITY_WORDS:
             return True
     return False
+
 
 def main():
     import sys
@@ -61,6 +70,7 @@ def main():
         json.dump(scenes, f, indent=2)
 
     print(f"[OK] Profanity detection complete → {output_json}")
+
 
 if __name__ == "__main__":
     main()

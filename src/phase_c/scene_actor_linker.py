@@ -28,13 +28,17 @@ MIN_FRAMES = int(os.getenv("ACTOR_MIN_FRAMES", 5))
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
 def load_faiss():
     if not os.path.exists(ACTOR_INDEX_PATH) or not os.path.exists(ACTOR_LABELS_PATH):
-        raise FileNotFoundError(f"Actor index or labels not found at {ACTOR_INDEX_PATH} / {ACTOR_LABELS_PATH}")
+        raise FileNotFoundError(
+            f"Actor index or labels not found at {ACTOR_INDEX_PATH} / {ACTOR_LABELS_PATH}"
+        )
     index = faiss.read_index(ACTOR_INDEX_PATH)
     with open(ACTOR_LABELS_PATH, "r", encoding="utf-8") as f:
         labels = json.load(f)
     return index, labels
+
 
 def init_face_app():
     if not HAS_FACE:
@@ -42,13 +46,16 @@ def init_face_app():
     # Use available providers (CUDA if available, else CPU)
     try:
         import onnxruntime as rt
+
         providers = rt.get_available_providers()
         # Prefer TensorRT -> CUDA -> CPU
-        if 'TensorRTExecutionProvider' in providers:
+        if "TensorRTExecutionProvider" in providers:
             print("[GPU] Using TensorRT for face detection")
-            app = FaceAnalysis(name="buffalo_l", providers=["TensorRTExecutionProvider"])
+            app = FaceAnalysis(
+                name="buffalo_l", providers=["TensorRTExecutionProvider"]
+            )
             app.prepare(ctx_id=0, det_size=(640, 640))
-        elif 'CUDAExecutionProvider' in providers:
+        elif "CUDAExecutionProvider" in providers:
             print("[GPU] Using CUDA for face detection")
             app = FaceAnalysis(name="buffalo_l", providers=["CUDAExecutionProvider"])
             app.prepare(ctx_id=0, det_size=(640, 640))
@@ -61,6 +68,7 @@ def init_face_app():
         return None
     return app
 
+
 def cosine_search(index, emb):
     if not HAS_FACE:
         return [], []
@@ -68,6 +76,7 @@ def cosine_search(index, emb):
     faiss.normalize_L2(emb)
     D, I = index.search(emb, TOP_K)
     return D[0], I[0]
+
 
 def process_scene(scene_frames_dir, face_app, index, labels):
     # when face libs unavailable, return empty list — this indicates no actor info
@@ -114,7 +123,7 @@ def process_scene(scene_frames_dir, face_app, index, labels):
 
     # 3️⃣ Normalize to 0-1 scale & filter weak actors
     max_score = max(score for _, score in results)
-    
+
     # Normalize scores to 0-1 range and filter weak actors (< 20% of max)
     filtered = []
     for actor, score in results:
@@ -126,8 +135,6 @@ def process_scene(scene_frames_dir, face_app, index, labels):
     filtered.sort(key=lambda x: x[1], reverse=True)
 
     return filtered
-
-
 
 
 def main():
@@ -165,17 +172,16 @@ def main():
                 # no valid detections for this scene
                 continue
 
-            movie_results.append({
-                "scene_id": scene_id,
-                "characters": [r[0] for r in ranked],
-                "character_dominance_ranking": [
-                    {
-                        "character": r[0],
-                        "score": float(round(float(r[1]), 3))
-                    }
-                    for r in ranked
-                ]
-            })
+            movie_results.append(
+                {
+                    "scene_id": scene_id,
+                    "characters": [r[0] for r in ranked],
+                    "character_dominance_ranking": [
+                        {"character": r[0], "score": float(round(float(r[1]), 3))}
+                        for r in ranked
+                    ],
+                }
+            )
 
         out_path = os.path.join(OUTPUT_DIR, f"{movie}_scene_actors.json")
         meta_path = os.path.join(OUTPUT_DIR, f"{movie}_scene_actors.meta.json")
@@ -194,6 +200,7 @@ def main():
             print(f"[OK] Actor linking skipped for {movie} (missing native deps)")
         else:
             print(f"[OK] Actor indexing completed for {movie}")
+
 
 if __name__ == "__main__":
     main()

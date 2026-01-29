@@ -12,13 +12,15 @@ def test_normalize_objects_structure():
     # Build canonical objects payload as expected after normalization
     canonical_objects = []
     for obj_label, cnt in fake_counter.items():
-        canonical_objects.append({
-            "type": obj_label,
-            "model": None,
-            "year": None,
-            "color": None,
-            "details": str({"count": cnt})
-        })
+        canonical_objects.append(
+            {
+                "type": obj_label,
+                "model": None,
+                "year": None,
+                "color": None,
+                "details": str({"count": cnt}),
+            }
+        )
 
     # Basic assertions on structure
     assert isinstance(canonical_objects, list)

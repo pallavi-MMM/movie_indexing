@@ -1,4 +1,3 @@
-
 import argparse
 import importlib
 import json
@@ -8,14 +7,12 @@ import shutil
 import time
 from typing import List
 
-
 # ensure repo root is on sys.path so `import src.xxx` works when running script
 REPO_ROOT = os.path.dirname(os.path.dirname(__file__))
 if REPO_ROOT not in sys.path:
     sys.path.insert(0, REPO_ROOT)
 
 from src.timer import format_duration
-
 
 STEPS: List[str] = [
     "src.phase_a.scene_segmentation",
@@ -53,6 +50,7 @@ def run_module(mod_name: str, movie: str, stop_on_error: bool = False):
         mod = importlib.import_module(mod_name)
     except Exception as e:
         import traceback
+
         print(f"[WARN] Could not import {mod_name}: {e}")
         print(traceback.format_exc())
         if stop_on_error:
@@ -72,7 +70,9 @@ def run_module(mod_name: str, movie: str, stop_on_error: bool = False):
                     for name, val in list(vars(mod).items()):
                         if not isinstance(name, str) or not isinstance(val, str):
                             continue
-                        if old_movie in val and name.upper().endswith(("_JSON", "_DIR", "_FILE", "_PATH", "_OUT", "_OUTPUT")):
+                        if old_movie in val and name.upper().endswith(
+                            ("_JSON", "_DIR", "_FILE", "_PATH", "_OUT", "_OUTPUT")
+                        ):
                             new_val = val.replace(old_movie, movie)
                             setattr(mod, name, new_val)
                             print(f"[INFO] Updated {mod.__name__}.{name} -> {new_val}")
@@ -89,6 +89,7 @@ def run_module(mod_name: str, movie: str, stop_on_error: bool = False):
     # Propagate global device choice to modules so import-time model inits can use it
     try:
         from src.device import DEVICE as __DEVICE
+
         setattr(mod, "DEVICE", __DEVICE)
     except Exception:
         pass
@@ -150,9 +151,15 @@ def clean_movie_outputs(movie: str):
         os.path.join(repo, "outputs", "scenes", f"{movie}_scenes.json"),
         os.path.join(repo, "outputs", "scene_assets", movie),
         os.path.join(repo, "outputs", "scene_dialogue", movie),
-        os.path.join(repo, "outputs", "scene_actor_index", f"{movie}_scene_actors.json"),
-        os.path.join(repo, "outputs", "scene_visual_index", f"{movie}_scene_visuals.json"),
-        os.path.join(repo, "outputs", "scene_object_index", f"{movie}_scene_objects.json"),
+        os.path.join(
+            repo, "outputs", "scene_actor_index", f"{movie}_scene_actors.json"
+        ),
+        os.path.join(
+            repo, "outputs", "scene_visual_index", f"{movie}_scene_visuals.json"
+        ),
+        os.path.join(
+            repo, "outputs", "scene_object_index", f"{movie}_scene_objects.json"
+        ),
         os.path.join(repo, "outputs", "scene_context", f"{movie}_scene_context.json"),
         os.path.join(repo, "outputs", "scene_speakers", movie),
         os.path.join(repo, "outputs", "scene_emotion", movie),
@@ -177,7 +184,9 @@ def clean_movie_outputs(movie: str):
             print(f"[WARN] Could not remove {path}: {e}")
 
     if removed:
-        print(f"[INFO] Removed {len(removed)} existing per-movie artifacts for '{movie}'")
+        print(
+            f"[INFO] Removed {len(removed)} existing per-movie artifacts for '{movie}'"
+        )
     else:
         print(f"[INFO] No existing artifacts found to remove for '{movie}'")
 
@@ -209,12 +218,28 @@ def choose_movie_interactive(movies):
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--movie", default=None, help="target movie identifier (optional)")
-    parser.add_argument("--list", action="store_true", help="list available movies and exit")
-    parser.add_argument("--force", action="store_true", help="remove existing per-movie outputs before run (ensure fresh generation)")
-    parser.add_argument("--stop-on-error", action="store_true", help="stop the pipeline when a module fails")
-    parser.add_argument("--show-final", action="store_true", help="print final JSON to stdout")
-    parser.add_argument("--dump-path", help="write the final JSON to this path (optional)")
+    parser.add_argument(
+        "--movie", default=None, help="target movie identifier (optional)"
+    )
+    parser.add_argument(
+        "--list", action="store_true", help="list available movies and exit"
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="remove existing per-movie outputs before run (ensure fresh generation)",
+    )
+    parser.add_argument(
+        "--stop-on-error",
+        action="store_true",
+        help="stop the pipeline when a module fails",
+    )
+    parser.add_argument(
+        "--show-final", action="store_true", help="print final JSON to stdout"
+    )
+    parser.add_argument(
+        "--dump-path", help="write the final JSON to this path (optional)"
+    )
     args = parser.parse_args(argv)
 
     movie = args.movie

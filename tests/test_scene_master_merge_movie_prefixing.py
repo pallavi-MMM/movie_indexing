@@ -26,9 +26,7 @@ def test_load_folder_preserves_origin_movie_prefix(tmp_path=None):
 
     # Simulate Ravi_teja actor file that uses local scene ids (no prefix)
     ravi_file = folder / "Ravi_teja_scene_actors.json"
-    write_json(ravi_file, [
-        {"scene_id": "scene_0001", "characters": ["ravi"]}
-    ])
+    write_json(ravi_file, [{"scene_id": "scene_0001", "characters": ["ravi"]}])
 
     # Simulate Alanati having no actors
     alan_file = folder / "Alanati ramachandrudu - trailer_scene_actors.json"
@@ -46,6 +44,7 @@ def test_load_folder_preserves_origin_movie_prefix(tmp_path=None):
 def test_final_outputs_for_different_movies_are_distinct():
     a = "outputs/scene_index/Ravi_teja_FINAL.json"
     b = "outputs/scene_index/Alanati ramachandrudu - trailer_FINAL.json"
+
     # Ensure test is robust to test-ordering: create minimal files if missing
     def _ensure(path, movie):
         if not os.path.exists(path):

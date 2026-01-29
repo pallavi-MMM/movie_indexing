@@ -7,6 +7,7 @@ Usage:
 This demonstrates the new mock-first, production-ready local pipeline
 that doesn't require heavy ML dependencies.
 """
+
 import json
 import tempfile
 import sys
@@ -20,7 +21,7 @@ from src.run_local_pipeline import run_scene_pipeline
 
 def main():
     """Run a simple example scene through the pipeline."""
-    
+
     # Create a sample scene
     scene = {
         "scene_id": "example_scene_001",
@@ -37,7 +38,7 @@ def main():
         "emotions": ["excited", "welcoming"],
         "location": "Home office",
     }
-    
+
     print("=" * 60)
     print("EXAMPLE: Local Pipeline (Mock-First, Production-Ready)")
     print("=" * 60)
@@ -45,22 +46,22 @@ def main():
     print(f"  Dialogue lines: {len(scene['dialogue_text'])}")
     print(f"  Objects: {len(scene['objects'])}")
     print(f"  Location: {scene.get('location')}\n")
-    
+
     # Run the pipeline
     print("Running pipeline stages...")
     print("  1. Safety analysis...")
     print("  2. Visual quality analysis...")
     print("  3. VLM summarizer...")
     print("  4. Fusion into canonical scene...")
-    
+
     result = run_scene_pipeline(scene)
-    
+
     print("\nPipeline complete!\n")
     print("=" * 60)
     print("OUTPUT SCENE (Canonical JSON)")
     print("=" * 60)
     print(json.dumps(result, indent=2))
-    
+
     print("\n" + "=" * 60)
     print("KEY OUTPUTS")
     print("=" * 60)
@@ -72,7 +73,7 @@ def main():
     print(f"✓ Quality Flags: {result.get('quality_flags', {})}")
     print(f"✓ Field Confidences Present: {'field_confidences' in result}")
     print(f"✓ Field Provenance Present: {'field_provenance' in result}")
-    
+
     # Save example output
     output_path = Path("example_output.json")
     with open(output_path, "w", encoding="utf-8") as f:

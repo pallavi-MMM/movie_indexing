@@ -2,7 +2,12 @@ from src.visual_quality import analyze_visual_quality
 
 
 def test_honors_explicit_black_and_flash_flags():
-    scene = {"scene_id": "s1", "movie_id": "m1", "black_frames_detected": True, "flash_frames_detected": False}
+    scene = {
+        "scene_id": "s1",
+        "movie_id": "m1",
+        "black_frames_detected": True,
+        "flash_frames_detected": False,
+    }
     out = analyze_visual_quality(scene)
     assert out["quality_flags"]["black_frames_detected"] is True
     assert out["field_confidences"]["black_frames_detected"] >= 0.9

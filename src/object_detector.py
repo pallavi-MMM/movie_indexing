@@ -4,6 +4,7 @@ Prefers GPU-backed `ultralytics` YOLO model when available and the model
 artifact is present (e.g., `yolov8m.pt`). In environments without the model or
 library the wrapper falls back to a deterministic mock detector for tests.
 """
+
 from typing import Dict, List, Optional
 import os
 import numpy as np
@@ -11,7 +12,9 @@ import numpy as np
 
 class YOLODetector:
     def __init__(self, model_path: Optional[str] = None, device: str = "cuda"):
-        self.model_path = model_path or os.path.join(os.path.dirname(__file__), "..", "yolov8m.pt")
+        self.model_path = model_path or os.path.join(
+            os.path.dirname(__file__), "..", "yolov8m.pt"
+        )
         self.device = device
         self._model = None
         # do not import heavy libs at import time — lazy load
@@ -66,11 +69,22 @@ class YOLODetector:
                     # Attempt to get human label if model has names
                     try:
                         names = model.model.names if hasattr(model, "model") else None
-                        lbl = names[int(label)] if names and label is not None else str(int(label) if label is not None else "")
+                        lbl = (
+                            names[int(label)]
+                            if names and label is not None
+                            else str(int(label) if label is not None else "")
+                        )
                     except Exception:
                         lbl = str(int(label) if label is not None else "")
                     conf = float(b.conf[0]) if hasattr(b, "conf") else 0.0
-                    out.append({"type": lbl, "bbox": [xyxy[0], xyxy[1], xyxy[2], xyxy[3]], "confidence": conf, "model": os.path.basename(self.model_path)})
+                    out.append(
+                        {
+                            "type": lbl,
+                            "bbox": [xyxy[0], xyxy[1], xyxy[2], xyxy[3]],
+                            "confidence": conf,
+                            "model": os.path.basename(self.model_path),
+                        }
+                    )
             return out
         except Exception:
             # On any runtime error, fallback to mock
@@ -85,9 +99,14 @@ class YOLODetector:
         y1 = float(((h * 3) % 100) / 100.0 * 50)
         x2 = x1 + 50.0
         y2 = y1 + 50.0
-        return [{"type": "mock_object", "bbox": [x1, y1, x2, y2], "confidence": 0.75, "model": "mock"}]
+        return [
+            {
+                "type": "mock_object",
+                "bbox": [x1, y1, x2, y2],
+                "confidence": 0.75,
+                "model": "mock",
+            }
+        ]
 
 
 __all__ = ["YOLODetector"]
-
-

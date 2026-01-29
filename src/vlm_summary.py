@@ -8,6 +8,7 @@ confidences/provenance so fusion can ingest them.
 
 The implementation is deterministic and mock-first so CI remains fast.
 """
+
 from typing import Dict, Any, List
 
 

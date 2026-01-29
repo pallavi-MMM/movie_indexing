@@ -13,12 +13,19 @@ def test_end_to_end_pipeline_merges_all_outputs():
 
     merged = run_scene_pipeline(scene)
     # merged should include safety_flags and quality_flags from detectors
-    assert "safety_flags" in merged or "safety_flags" in merged.get("field_provenance", {})
-    assert "quality_flags" in merged or "quality_flags" in merged.get("field_provenance", {})
+    assert "safety_flags" in merged or "safety_flags" in merged.get(
+        "field_provenance", {}
+    )
+    assert "quality_flags" in merged or "quality_flags" in merged.get(
+        "field_provenance", {}
+    )
     # merged should include the scene_summary produced by VLM
     assert "scene_summary" in merged
     # keywords should be present and include Lead
     kws = merged.get("keywords_auto_generated", [])
     assert isinstance(kws, list)
     # Prefer presence of 'Lead' either in keywords or characters
-    assert any((c.get("name") == "Lead") for c in merged.get("characters", [])) or "Lead" in kws
+    assert (
+        any((c.get("name") == "Lead") for c in merged.get("characters", []))
+        or "Lead" in kws
+    )

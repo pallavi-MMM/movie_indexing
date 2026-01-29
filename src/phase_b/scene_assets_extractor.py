@@ -14,10 +14,12 @@ MAX_FRAMES = 100000
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
 def time_to_seconds(t):
     h, m, rest = t.split(":")
     s, ms = rest.split(".")
-    return int(h)*3600 + int(m)*60 + int(s) + int(ms)/1000
+    return int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
+
 
 def extract_frames(video_path, start, end, out_dir):
     cap = cv2.VideoCapture(video_path)
@@ -60,22 +62,29 @@ def extract_frames(video_path, start, end, out_dir):
 
     cap.release()
 
+
 def extract_audio(video_path, start, end, out_audio):
     cmd = [
-        "ffmpeg", "-y",
-        "-ss", str(start),
-        "-to", str(end),
-        "-i", video_path,
-        "-map", "0:a:0",
+        "ffmpeg",
+        "-y",
+        "-ss",
+        str(start),
+        "-to",
+        str(end),
+        "-i",
+        video_path,
+        "-map",
+        "0:a:0",
         "-vn",
-        "-ac", "1",
-        "-ar", "16000",
-        "-c:a", "pcm_s16le",
-        out_audio
+        "-ac",
+        "1",
+        "-ar",
+        "16000",
+        "-c:a",
+        "pcm_s16le",
+        out_audio,
     ]
     subprocess.run(cmd, check=True)
-
-
 
 
 def process_movie(movie_name):
@@ -101,6 +110,7 @@ def process_movie(movie_name):
 
     print(f"[OK] Assets extracted for {movie_id}")
 
+
 def main():
     target = globals().get("TARGET_MOVIE")
     for file in os.listdir(MOVIES_DIR):
@@ -110,6 +120,7 @@ def main():
         if target and movie_id != target:
             continue
         process_movie(file)
+
 
 if __name__ == "__main__":
     main()
