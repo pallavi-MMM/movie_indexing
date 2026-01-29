@@ -1,0 +1,70 @@
+movies
+ ├── id
+ ├── title / DAM ID
+ ├── metadata ( Full JSONB)
+ └── created_at
+
+ scenes
+ ├── id
+ ├── movie_id (FK → movies.id)
+ ├── start_frame
+ ├── end_frame
+ ├── duration
+ ├── scene_json (JSONB)   ← FULL, UNTOUCHED SCENE DATA
+ └── created_at
+
+objects
+ ├── id
+ ├── scene_id
+ ├── label
+ ├── confidence
+ ├── metadata (JSONB)
+ └── created_at
+
+ actors
+ ├── id (PK)
+ ├── name
+ ├── DAM ID
+ ├── metadata (JSONB)
+ └── created_at
+
+ actor_embeddings
+ ├── id
+ ├── actor_id (FK → actors.id)
+ ├── embedding VECTOR(dim)
+ ├── model
+ ├── is_centroid
+ ├── metadata (JSONB)
+ └── created_at
+
+ scene_actor_rankings
+ ├── scene_id (FK)
+ ├── actor_id (FK)
+ ├── dominance_score
+ ├── rank
+ ├── role
+ ├── thresholds (JSONB)
+ └── created_at
+
+ actor_appearances
+ ├── scene_id
+ ├── actor_id
+ ├── start time (scene start )
+ |-- frame
+ ├── avg_area
+ └── created_at
+
+quality_flags
+ ├── id
+ ├── scene_id (FK)
+ ├── category
+ ├── severity
+ ├── details (JSONB)
+ ├── detected_at
+ └── created_at
+
+
+python src/run_pipeline.py --movie "maheshbabu"
+
+
+E:\movie-scene-indexer\movies\maheshbabu.mp4

@@ -1,0 +1,30 @@
+# Requirements for movie-scene-indexer (runtime + helpful extras)
+# Adjust versions/platform-specific packages (e.g., torch, faiss) as needed for your GPU/OS.
+
+# Core ML / audio / vision
+torch
+torchaudio
+numpy
+opencv-python
+Pillow
+ultralytics
+
+# ASR backends (project auto-detects available backend; both optional)
+faster-whisper
+whisper
+
+# Audio analysis
+librosa
+soundfile
+scipy
+
+# Utilities
+tqdm
+onnxruntime
+
+# Vector DB (optional - choose faiss-cpu or faiss-gpu depending on platform)
+faiss-cpu
+
+# Development / testing
+pytest
+jsonschema

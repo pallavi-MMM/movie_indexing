@@ -1,4 +1,4 @@
-"""Lightweight ASR wrapper with a mock mode for CI and environments without models.
+  """Lightweight ASR wrapper with a mock mode for CI and environments without models.
 
 Design goals:
 - Minimal external dependencies for tests (mock mode returns deterministic transcripts)
@@ -41,12 +41,16 @@ class ASR:
             # Attempt faster_whisper usage (best-effort) — keep optional to avoid hard dependency
             try:
                 from faster_whisper import WhisperModel  # type: ignore
+                import torch
 
-                model = WhisperModel(self.model_name)
+                DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+                COMPUTE_TYPE = "float16" if DEVICE.startswith("cuda") else "int8"
+
+                model = WhisperModel(self.model_name, device=DEVICE, compute_type=COMPUTE_TYPE)
                 segments = []
                 text_parts = []
+                # keep beam search and deterministic temperature
                 for segment in model.transcribe(audio_path, beam_size=5, temperature=0.0):
-                    # segment: (text, start, end, tokens, temperature)
                     start = getattr(segment, "start", None) or 0.0
                     end = getattr(segment, "end", None) or 0.0
                     txt = getattr(segment, "text", str(segment))

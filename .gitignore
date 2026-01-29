@@ -1,11 +1,133 @@
+# Python & Virtual Environments
 /.venv/
-/.env
-outputs/
+venv/
+ENV/
+env/
+.venv
+env.bak/
+venv.bak/
 __pycache__/
-*.pyc
-.pytest_cache/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDE & Editors
 .vscode/
 \.idea/
-dist/
-build/
-*.egg-info/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+.settings/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Environment & Credentials
+/.env
+.env.local
+.env.*.local
+
+# Project-specific - Large media files (DO NOT COMMIT)
+movies/*.mp4
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+
+# Project-specific - Generated outputs (local development)
+outputs/
+logs/*.log
+*.wav
+*.mp3
+*.flac
+*.aac
+test0.*
+full_audio.*
+loud.*
+wave.png
+extraction_log.txt
+pipeline_*.log
+
+# Project-specific - Model files (large, can be re-downloaded)
+yolov8*.pt
+*.onnx
+*.pth
+*.pkl
+*.model
+*.pb
+
+# Project-specific - Temporary processing files
+*.tmp
+*.temp
+*.cache
+
+# OS files
+Thumbs.db
+*.lnk
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Node (if any frontend components added)
+node_modules/
+npm-debug.log
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Additional project-specific ignores
+# GPU virtualenv used locally for GPU builds
+venv_gpu/
+
+# Generated / exported project outputs
+movie_event_json/
+output_json/
+
+# Large model/artifact files (already covered by patterns above, but list explicitly)
+yolov8m.pt

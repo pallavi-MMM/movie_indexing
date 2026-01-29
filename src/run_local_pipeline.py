@@ -1,9 +1,4 @@
-"""Local pipeline runner (mock-first) that composes safety, visual quality,
-VLM summarizer, and fusion into a single merged scene output.
 
-This module is intended for unit tests and local development. It does not
-require heavy models and uses the mock implementations already present.
-"""
 from typing import Dict, Any, List
 import logging
 
@@ -17,14 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def run_scene_pipeline(scene: Dict[str, Any]) -> Dict[str, Any]:
-    """Run the staged pipeline on a single scene dict and return the merged scene.
-
-    Steps performed (mock-friendly):
-      1. Safety analysis -> produces `safety_flags`, `field_confidences`, `field_provenance`
-      2. Visual quality analysis -> produces `quality_flags`, `field_confidences`, `field_provenance`
-      3. VLM summarizer -> produces `scene_summary`, `keywords_auto_generated`, `field_confidences`, `field_provenance`.
-      4. Merge all sources (original scene + outputs) via `merge_scenes_from_sources`.
-    """
+    
     # Normalize input scene shallow copy
     base_scene = {k: v for k, v in scene.items()}
 
