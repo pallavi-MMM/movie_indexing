@@ -29,18 +29,17 @@ STEPS: List[str] = [
     "src.scene_profanity_detector",
     "src.scene_emotion_analyzer",
     "src.scene_emotion_merger",
-    "src.scene_semantic_emotion_analyzer",  # Semantic emotion analysis
+    "src.scene_semantic_emotion_analyzer",
     "src.scene_content_safety",
-    # Master merger should run last so it can merge all per-phase outputs
-    "src.scene_master_merger",
-    "src.scene_semantic_emotion_merger",  # Merge semantic emotions into final schema
-    "src.scene_audio_intelligence",  # Phase III-A: Audio & sound design intelligence
-    "src.scene_audio_intelligence_merger",  # Merge audio intelligence into final schema
-    "src.scene_meta_intelligence",  # Phase VI - Final meta intelligence enrichment
-    "src.scene_narrative_structure",  # Phase III-B: Narrative structure analysis
-    "src.scene_summarizer",  # Phase VII - Generate signal-based scene summaries
-    "src.scene_enrichment",  # Phase VIII - Populate missing fields and add complexity scores
-    "src.scene_character_merger",  # Merge character introductions into final JSON
+    "src.scene_semantic_emotion_merger",
+    "src.scene_audio_intelligence",
+    "src.scene_audio_intelligence_merger",
+    "src.scene_meta_intelligence",
+    "src.scene_narrative_structure",
+    "src.scene_summarizer",
+    "src.scene_enrichment",
+    "src.scene_character_merger",
+    "src.scene_master_merger", 
 ]
 
 

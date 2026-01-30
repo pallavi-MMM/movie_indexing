@@ -75,6 +75,8 @@ class TestRunPipelineCLI(unittest.TestCase):
 
         os.makedirs(assets, exist_ok=True)
         os.makedirs(dialogue, exist_ok=True)
+        os.makedirs(os.path.dirname(visual), exist_ok=True)
+
         with open(visual, "w") as f:
             f.write("{}")
         os.makedirs(os.path.dirname(index), exist_ok=True)
