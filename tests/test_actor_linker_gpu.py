@@ -1,5 +1,12 @@
-import pytest
+
 from src.face_tracker import FaceTracker
+import torch
+import pytest
+
+@pytest.mark.skipif(
+    not torch.cuda.is_available(),
+    reason="CUDA not available"
+)
 
 
 def test_gpu_mode_raises_when_deps_missing(tmp_path):

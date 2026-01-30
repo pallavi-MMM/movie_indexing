@@ -26,5 +26,9 @@ onnxruntime
 faiss-cpu
 
 # Development / testing
-pytest
 jsonschema
+pytest>=8.0
+
+numpy
+opencv-python-headless
+

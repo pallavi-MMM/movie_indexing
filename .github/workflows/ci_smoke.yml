@@ -20,7 +20,7 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: Run unit tests
-        run: python -m unittest discover -s tests -v
+        pytest tests -v
 
       - name: Run CI smoke script
         run: python tests/ci_smoke.py
